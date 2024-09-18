@@ -1,0 +1,10 @@
+# obsidian specific files
+.obsidian/
+*.obsidian
+
+# ignore workspace and cache
+.obsidian/workspace
+.obsidian/cache
+
+# ignore Obsidian backups
+.obsidian/backup/
