@@ -1,6 +1,6 @@
 # fcul-mei-notes
 
-Notes from my [MSc in Computer Science and Engineering](https://fenix.ciencias.ulisboa.pt/degrees/engenharia-informatica-564500436615277) @ [FCUL](https://ciencias.ulisboa.pt/en), with a specialization in **Software Engineering**.
+Notes from my [MSc in Computer Science and Engineering](https://fenix.ciencias.ulisboa.pt/degrees/engenharia-informatica-564500436615277) @ [FCUL](https://ciencias.ulisboa.pt/en), specialized in **Software Engineering**
 
 ## Contents
 ### 1st Semester
