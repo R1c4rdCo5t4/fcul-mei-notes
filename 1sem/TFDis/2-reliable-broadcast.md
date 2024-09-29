@@ -31,7 +31,7 @@ when MSG (m) is received from pk do
 (2) if (first reception of m) then
 (3)     for each j ∈ {1, . . . , n} \ {i, k} do send MSG (m) to pj end for;
 (4)     URB deliver (m) % deliver m to the upper application layer %
-(5) end if.
+(5) end if
 ```
 
 ##### URB Problem Definition
@@ -76,7 +76,7 @@ An illustration of RB vs URB delivery guarantees: in RB, correct processes deliv
 
 FIFO-URB utilizes the URB middleware layer (to broadcast messages reliably) plus its layer (to deliver messages in order).
 
-![[./resources/fifo-urb-2.png]]
+![](./resources/fifo-urb-2.png)
 
 ##### FIFO-URB Protocol
 ```vhdl
@@ -94,7 +94,7 @@ when MSG(m) is urb-delivered do % m carries its identity (m.sender, m.seq nb) %
 (10)                msg seti ← msg seti \ {m′}
 (11)        end while
 (12)    else msg seti ← msg seti ∪ {m}
-(13) end if.
+(13) end if
 ```
 
 #### Causal Order Message Delivery
@@ -122,7 +122,7 @@ when MSG (⟨m1, . . . , mℓ⟩) is urb-delivered do
 (5)         CO deliver (mx);
 (6)         causal pasti ← causal pasti ⊕ mx
 (7)     end if
-(8) end for.
+(8) end for
 ```
 
 However, this is not efficient because we have to store the whole causal past, making it very larger over time.
@@ -138,7 +138,7 @@ when MSG (⟨m1, . . . , mℓ⟩) is FIFO-delivered do
 (5)          CO deliver (mx);
 (6)          im causal pasti ← im causal pasti ⊕ mx
 (7)     end if
-(8) end for.
+(8) end for
 ```
 
 This version is slightly better, since building CO on top of FIFO is more advantageous:
