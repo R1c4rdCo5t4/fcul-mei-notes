@@ -214,5 +214,4 @@ task Diffusei(m) is
 	- **Class theta:** weakest FD for implementing URB
 	- **Class P:** FD for implementing quiescent and terminating URB
 	- **Class ◇P:** weakest bounded FD for implementing quiescent URB
-	- **Class HB:** weakest (unbounded) FD for implementing quiescent URB
-		- contrary to P and ◇P, HB can be implemented in asynchronous systems
+	- **Class HB:** weakest (unbounded) FD for implementing quiescent URB - contrary to P and ◇P, HB can be implemented in asynchronous systems
