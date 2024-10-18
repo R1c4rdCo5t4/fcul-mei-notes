@@ -34,7 +34,7 @@ when MSG (m) is received from pk do
 (5) end if
 ```
 
-##### URB Problem Definition
+##### Uniform Reliable Broadcast (URB)
 - **Safety**:
 	- ***URB-validity***: if a process urb-delivers a message *m*, then *m* has been previously urb-broadcasted (by `pm.sender`) - "a process does not deliver made up messages".
 	- ***URB-integrity***: a process urb-delivers a message *m* at most once - "a process does not deliver the same message more than once".
