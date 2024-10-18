@@ -19,6 +19,7 @@
 - The value returned by a read is defined as follows:
 	- **If the read operation is not concurrent with write operations**, it returns the current value of the register (the value written by the last write)
 	- **If the read operation is concurrent with write operations**, it returns the value written by one of these writes or the last value of the register before these writes.
+- If a read invocation is concurrent with several write invocations, these writes are necessarily consecutive.
 
 ![](./resources/regular-register-example-1.png)
 - The only possible values for *v* are {0, 1, 2}.
