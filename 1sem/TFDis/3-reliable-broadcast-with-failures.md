@@ -21,7 +21,7 @@ This is similar to the reliable broadcast specification, and it's not a one-shot
 - ***FC-integrity***: for any message *msg*, if *pj* receives *msg* from *pi* an infinite number of times, then *pi* has sent *msg* to *pj* an infinite number of times.
 - ***FC-termination***: for any message *msg*, if *pi* sends *msg* an infinite number of times to *pj*, and *pj* executes *“receive() from pi”* infinitely often, it receives *msg* from *pi* an infinite number of times.
 
-Each protocol message defines a specific message of type µ and the channel is fair to all types of messages.
+Each protocol message defines a specific message of type µ and the channel is fair to all types of messages. If a message is sent an arbitrary but finite number of times, there is no guarantee on its reception.
 
 ### Fair Lossy Channel (FLC)
 - ***FLC-validity***: if *pj* receives a message from *pi*, this message has been previously sent by *pi* to *pj*.
@@ -34,12 +34,12 @@ FLC-termination states the channel transmits messages but gives no information a
 - FC and FLC are different, but neither is stronger than the other.
 - **Example 1:**
 	- *pj* sends infinitely-many messages 1, 2, 3, 4, 5, ...
-	- What can *pj* receive with FC in the worst case? **Nothing** - it might take so long that the messages are considered to be not received (yet).
-	- What can *pj* receive with FLC in the worst case? **An infinite set of integers** - some of them dropped, but many being received (it cannot indefinitely delay all messages).
+	- What can *pj* receive with **FC** in the worst case? **Nothing** - it might take so long that the messages are considered to be not received (yet).
+	- What can *pj* receive with **FLC** in the worst case? **An infinite set of integers** - some of them dropped, but many being received (it cannot indefinitely delay all messages).
 - **Example 2:**
 	- *pi* sends infinitely-many messages 1, 2, 1, 2, 1, ...
-	- What can *pj* receive with FC in the worst case? **1 and 2 (infinitely many times)** - the messages might be delayed, but eventually, both 1 and 2 will be received repeatedly.
-	- What can *pj* receive with FLC in the worst case? **Just 1 or just 2** - the receiver might only get all instances of either 1 or 2, but not both.
+	- What can *pj* receive with **FC** in the worst case? **1 and 2 (infinitely many times)** - the messages might be delayed, but eventually, both 1 and 2 will be received repeatedly.
+	- What can *pj* receive with **FLC** in the worst case? **Just 1 or just 2** - the receiver might only get all instances of either 1 or 2, but not both.
 
 ### Uniform Reliable Broadcast (URB) with Fair Channels (FC)
 - Using fair channels instead of reliable channels weakens the system model from `CAMP(n,t)` to `CAMP(n,t)[-FC]`

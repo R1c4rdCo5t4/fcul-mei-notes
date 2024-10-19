@@ -23,10 +23,11 @@ for each j ∈ {1,...,n} do send m to pj end for
 
 - At low level, these primitives use *send* and *receive* calls.
 - We assume that every message *m* has a unique identifier `⟨m.sender, m.seq_nb⟩`, where `m.sender` is the id of the sender process and `m.seq_nb` is a sequence number generated locally by `pm.sender`.
+- A message *m* is called an **application message**, while a message carrying a tag defined by the construction algorithm (*MSG (m)*) is called a **protocol message**.
 ##### URB Protocol
 ```vhdl
 operation URB broadcast (m) is
-(1) send MSG(m) to pi.
+(1) send MSG(m) to pi
 when MSG (m) is received from pk do
 (2) if (first reception of m) then
 (3)     for each j ∈ {1, . . . , n} \ {i, k} do send MSG (m) to pj end for;
@@ -65,7 +66,6 @@ An illustration of RB vs URB delivery guarantees: in RB, correct processes deliv
 	- **Causal order**: message delivery satisfy cause-effect precedence.
 	- **Total order**: messages are delivered in the same order.
 - All ordered URB are **multi-shot problems**, since their specifications consider all messages broadcasted in the system.
-
 #### FIFO Message Delivery
 - The **FIFO-URB** abstraction is defined by the URB properties plus one more: 
 	- *FIFO-URB message delivery*: if a process fifo-broadcasts a message *m* and later fifo-broadcasts a message *mʹ*, no process fifo-delivers *mʹ* unless it has previously fifo-delivered *m* - to establish order between messages
@@ -82,7 +82,8 @@ FIFO-URB utilizes the URB middleware layer (to broadcast messages reliably) plus
 ```vhdl
 operation FIFO broadcast (m) is
 (1) m.sender ← i; m.seq nb ←pi’s next seq. number (starting from 1);
-(2) URB broadcast MSG(m).
+(2) URB broadcast MSG(m)
+
 when MSG(m) is urb-delivered do % m carries its identity (m.sender, m.seq nb) %
 (3) let j = m.sender;
 (4) if (nexti[j] = m.seq nb)
@@ -107,15 +108,17 @@ when MSG(m) is urb-delivered do % m carries its identity (m.sender, m.seq nb) %
 
 - The CO-URB abstraction is defined by the URB properties plus one more:
 	- *CO-URB message delivery*: if *m* → *Mm'*, no process co-delivers *m'* unless it has previously co-delivered *m*.
-- FIFO delivery is a weakening of CO delivery applied to each channel.
+- FIFO delivery is a weakening of CO delivery applied to each channel. This means that CO delivery generalizes FIFO delivery to all the messages whose broadcasts are related by the “message happened before” relation (→M), whatever their senders are.
 
 ![](./resources/causal-order-delivery.png)
+In this example, **m11** and **m41** have no causal relationship because **p4** broadcasts **m41** before receiving **m11**, so they are independent and can be delivered in any order. However, **m11** and **m42** have a causal relationship because **p4** receives **m11** before broadcasting **m42**, so **m11** must be delivered before **m42** at all processes to maintain the causal order.
 
 ##### A Causal Order URB Protocol
 ```vhdl
 operation CO broadcast (m) is
 (1) URB broadcast MSG (causal pasti ⊕ m);
-(2) causal pasti ← causal pasti ⊕ m.
+(2) causal pasti ← causal pasti ⊕ m
+
 when MSG (⟨m1, . . . , mℓ⟩) is urb-delivered do
 (3) for x from 1 to ℓ do
 (4)     if (mx not yet CO-delivered) then
@@ -125,13 +128,14 @@ when MSG (⟨m1, . . . , mℓ⟩) is urb-delivered do
 (8) end for
 ```
 
-However, this is not efficient because we have to store the whole causal past, making it very larger over time.
+However, this is highly inefficient because we have to store the whole causal past forever, with the size of protocol messages increasing forever.
 
 ##### Another Causal Order URB Protocol
 ```vhdl
 operation CO broadcast (m) is
 (1) FIFO broadcast MSG (im causal pasti ⊕ m);
-(2) im causal pasti ← ϵ.
+(2) im causal pasti ← ϵ
+
 when MSG (⟨m1, . . . , mℓ⟩) is FIFO-delivered do
 (3) for x from 1 to ℓ do
 (4)     if (mx not yet CO-delivered) then
