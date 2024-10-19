@@ -194,3 +194,7 @@ when MSG (m) is urb-delivered do
 
 ##### Algorithm Example Execution
 ![](./resources/co-broadcast-using-vector-clocks-example.png)
+
+### Message & Communication Complexity
+- **Message complexity**: asymptotical number of messages exchanged during protocol execution.
+- **Communication complexity**: asymptotical number of bits exchanged during protocol execution.
