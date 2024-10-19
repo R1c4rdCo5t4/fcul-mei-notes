@@ -156,3 +156,41 @@ This version is slightly better, since building CO on top of FIFO is more advant
 - **The FIFO and CO broadcast abstractions can be built on any system model where URB broadcast is available**.
 - This is not the case for TO broadcast.
 - This means they can be used on top of the URB broadcasts implemented on weaker system models.
+
+### Causal Order Reliable Broadcast using Vector Clocks
+- The best solution so far required *pi* to send together with its message all messages it received since its last broadcast.
+- This is inefficient, as the same message can be URB-disseminated *n* times.
+- The goal is to avoid piggybacking previous messages during a broadcast
+- We can achieve that using **vector clocks**:
+	- Each process *pi* manages a local vector clock denoted *causal_pasti\[1..n]*
+	- This vector (initialized to \[0, ..., 0]) is such that *causal_pasti\[k]* contains the number of messages co-broadcasted by *pk* that have been co-delivered by *pi*.
+	- Each application message *m* piggybacks a vector of integers denoted *m.causal_past\[1..n]* such that *m.causal_past\[k]* = number of messages *m'* co-broadcast by *pk* such that *m'* → *Mm*
+	- An application message *m* can be co-delivered if all the messages *m'* such that m'* → *Mm* have already been locally co-delivered by *pi*.
+
+##### Protocol
+```vhdl
+operation CO broadcast (m) is
+(1) donei ← false;
+(2) m.causal past[1..n] ← causal pasti[1..n];
+(3) m.sender ← i;
+(4) URB broadcast MSG (m);
+(5) wait (donei)
+
+when MSG (m) is urb-delivered do
+(6) if DCi(m)
+(7)     then CO deliver (m);
+(8)         let j = m.sender;
+(9)         causal pasti[j] ← m.causal pasti[j]+1;
+(10)        donei ← (m.sender = i);
+(11)        while (∃m′ ∈ msg seti : DCi(m′)
+(12)            do CO deliver (m′);
+(13)                 let j = m′.sender;
+(14)                 causal pasti[j] ← m′.causal pasti[j]+1;
+(15)                 msg seti ← msg seti \ {m′}
+(16)        end while
+(17)    else msg seti ← msg seti ∪ {m}
+(18) end if.
+```
+
+##### Algorithm Example Execution
+![](./resources/co-broadcast-using-vector-clocks-example.png)
