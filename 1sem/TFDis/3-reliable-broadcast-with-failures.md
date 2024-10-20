@@ -57,7 +57,7 @@ operation URB broadcast (m) is send MSG (m) to pi.
 
 when MSG (m) is received from pk do
 (1) if (first reception of m)
-(2)     then allocate rec byi[m]; rec byi[m] ← {i, k};
+(2)     then allocate rec byi[m]; rec byi[m] ← {i, k}
 (3)         activate task Diffusei(m)
 (4)     else rec byi[m] ← rec byi[m] ∪ {k}
 (5) end if
@@ -100,7 +100,7 @@ initialization: trustedi ← any set of ⌈ (n+1) / 2 ⌉ processes
 background task: repeat forever broadcast ALIVE() end repeat
 
 when ALIVE () is received from pk do
-(1) suppress pk from queuei; add pk at the head of queuei;
+(1) suppress pk from queuei; add pk at the head of queuei
 (2) trustedi ← the ⌈ (n+1) / 2 ⌉ processes at the head of queuei
 ```
 
@@ -118,6 +118,8 @@ when ALIVE () is received from pk do
 - Since Θ can be built in *CAMP(n,t)\[P]* we use the model notation *CAMP(n,t)\[Θ, P]* which provides us with Θ for free.
 
 ##### Quiescent URB in *CAMP(n,t)\[-FC, Θ, P]*
+
+> This algorithm is **quiescent** and **terminating**.
 ```vhdl
 operation URB broadcast (m) is send MSG (m) to pi
 when MSG (m) is received from pk do
@@ -125,7 +127,7 @@ when MSG (m) is received from pk do
 (2)     then allocate rec byi[m]; rec byi[m] ← {i, k}
 (3)         activate task Diffusei(m)
 (4)     else rec byi[m] ← rec byi[m] ∪ {k}
-(5) end if;
+(5) end if
 (6) send ACK (m) to pk
 
 when ACK (m) is received from pk do
@@ -141,10 +143,8 @@ task Diffusei(m) is
 (12)     end for
 (13) until (rec byi[m] ∪ suspectedi) = {1,...,n} end repeat
 ```
-- This algorithm is **quiescent** and **terminating**.
-- Each time a process *pi* receives a protocol message MSG(m), it systematically sends back to its sender an acknowledgment message denoted `ACK(m)` (line 6). Moreover, when a process pᵢ receives `ACK(m)` from a process pₖ, it knows that pₖ has a copy of the application message m and consequently adds k to `rec_byᵢ[m]` (line 7). (Let us observe that this would be sufficient to obtain a quiescent URB construction if no process ever crashes.) - In order to prevent a process pᵢ from forever sending protocol messages to a crashed process pⱼ, the task `Diffuseᵢ(m)` is appropriately modified. A process pᵢ repeatedly sends the protocol message `MSG(m)` to a process pⱼ only if j ∉ (`rec_byᵢ[m]` ∪ `suspectedᵢ`) (lines 10-11). Due to the completeness property of the failure detector class P, pⱼ will eventually appear in `suspectedᵢ` if it crashes. Moreover, due to the strong accuracy property of the failure detector class P, pⱼ will not appear in `suspectedᵢ` before pⱼ crashes (if it ever crashes).
-
-
+- Each time a process *pi* receives a protocol message *MSG(m)*, it systematically sends back to its sender an *ACK(m)* (6). Moreover, when a process *pi* receives *ACK(m)* from a process *pk*, it knows that *pk* has a copy of the application message *m* and consequently adds *k* to *rec_byi\[m]* (7). This would be sufficient to obtain a quiescent URB construction if no process ever crashed.
+- In order to prevent a process *pi* from forever sending protocol messages to a crashed process *pj*, the task *Diffusei(m)* is appropriately modified. A process *pi* repeatedly sends the protocol message *MSG(m)* to a process *pj* only if j ∉ (*rec_byi\[m]* ∪ *suspectedi*) (10-11). Due to the completeness property of the failure detector class P, *pj* will eventually appear in *suspectedi* if it crashes. Moreover, due to the strong accuracy property of the failure detector class P, *pj* will not appear in *suspectedi* before *pj* crashes (if it ever crashes).
 
 ### The ◇P Failure Detector
 - A variant of P that can output arbitrary values for some time.
@@ -155,90 +155,95 @@ task Diffusei(m) is
 
 > **Quiescent** and but **not terminating**
 ```vhdl
-operation URB broadcast (m) is send MSG (m) to pi.
+operation URB broadcast (m) is send MSG (m) to pi
 when MSG (m) is received from pk do
 (1) if (first reception of m)
-(2)     then allocate rec byi[m]; rec byi[m] ← {i, k};
+(2)     then allocate rec byi[m]; rec byi[m] ← {i, k}
 (3)         activate task Diffusei(m)
 (4)     else rec byi[m] ← rec byi[m] ∪ {k}
-(5) end if;
-(6) send ACK (m) to pk.
+(5) end if
+(6) send ACK (m) to pk
 
 when ACK (m) is received from pk do
-(7) rec byi[m] ← rec byi[m] ∪ {k}.
+(7) rec byi[m] ← rec byi[m] ∪ {k}
 
 when (trustedi ⊆ rec byi[m]) ∧ (pi has not yet urb-delivered m) do
-(8) URB deliver (m).
+(8) URB deliver (m)
 
 task Diffusei(m) is
 (9)  repeat
-(10)     for each j ∈ {1,...,n} \ rec byi[m] do
+(10)     for each j ∈ {1,...,n} \ rec byi[m] do 
 (11)         if (j /∈ suspectedi) then send MSG (m) to pj end if
 (12)     end for
-(13) until (rec byi[m]) = {1,...,n} end repeat
+(13) until (rec byi[m]) = {1,...,n} end repeat % can never be satisfied (not terminating) %
 ```
+- A quiescent URB construction is obtained by replacing the predicate that controls the termination of the task *Diffusei(m)* (line 13 of the P algorithm), by the weaker predicate *rec_byi\[m] = {1,...,n}*. This modification is due to the fact that a set *suspectedi* no longer permanently guarantees that all the processes it contains have crashed. 
+- We know that, after some finite time, *suspectedi* will contain only crashed processes and will eventually contain all the crashed processes. It follows from the previous observation that this algorithm is quiescent but not necessarily terminating (according to the failure pattern, it is possible that the termination predicate is never satisfied).
 
 ### The Heartbeat (HB) Failure Detector
+- This is the weakest class of failure detectors for quiescent communication.
 - Both P and ◇P require synchrony to be implemented, but quiescence can be provided in *CAMP(n,t)\[-FC]* with the HB failure detector.
 - *HBi\[j]* counts heartbeats from process *pj* at process *pi* such that if *pj* is faulty, *HBi\[j]* will be bounded (**completeness**) and, if *pj* is correct, *HBi\[j]* keeps increasing (**liveness**).
-- Contrary to previous FD classes, the output of HB is unbounded.
+- Contrary to previous FD classes, the output of HB is unbounded (the values output by the failure detector can grow indefinitely).
 
-##### Quiescent URB in *CAMP(n,t)\[-FC, q, HB]*
+##### Quiescent URB in *CAMP(n,t)\[-FC, Θ, HB]*
 
 > **Quiescent** but **not terminating**
 ```vhdl
-operation URB broadcast (m) is send MSG (m) to pi.
+operation URB broadcast (m) is send MSG (m) to pi
 when MSG (m) is received from pk do
 (1) if (first reception of m)
-(2)     then allocate rec byi[m], prev hbi[m], cur hbi[m];
-(3)         rec byi[m] ← {i, k};
+(2)     then allocate rec byi[m], prev hbi[m], cur hbi[m]
+(3)         rec byi[m] ← {i, k}
 (4)         activate task Diffuse(m)
 (5)     else rec byi[m] ← rec byi[m] ∪ {k}
-(6) end if;
-(7) send ACK (m) to pk.
+(6) end if
+(7) send ACK (m) to pk
 
 when ACK (m) is received from pk do
-(8) rec byi[m] ← rec byi[m] ∪ {k}.
+(8) rec byi[m] ← rec byi[m] ∪ {k}
 
 when (trustedi ⊆ rec byi[m]) ∧ (pi has not yet urb-delivered m) do
-(9) URB deliver (m).
+(9) URB deliver (m)
 
 task Diffusei(m) is
-(10) prev hbi[m] ← [−1,..., −1];
+(10) prev hbi[m] ← [−1,..., −1]
 (11) repeat
-(12)     cur hbi[m] ← HBi;
+(12)     cur hbi[m] ← HBi
 (13)     for each j ∈ {1,...,n} \ rec byi[m] do
 (14)         if (prev hbi[m][j] < cur hbi[m][j]) then send MSG (m) to pj end if
-(15)     end for;
+(15)     end for
 (16)     prev hbi[m] ← cur hbi[m]
-(17) until rec byi[m] = {1,...,n} end repeat.
+(17) until rec byi[m] = {1,...,n} end repeat
 ```
+- This algorithm contains a previous and a current heartbeat array (line 2). Basically, a process *pi* sends the protocol message *MSG(m)* to a process *pj* only if *j ∉ rec_byᵢ\[m]* (from *pi*’s point of view, *pj* has not yet received the application message m), and *HBi\[j]* has increased since the last test (from *pi*’s point of view, *pj* is alive, predicate of line 14). The local variables *prev_hbi\[m]\[j]* and *cur_hbi\[m]\[j]* are used to keep the two last values read from *HBi\[j]*.
+- In essence, the lack of direct confirmation, combined with the possibility of indefinite message loss, creates a situation where the algorithm can become quiescent (stops sending new messages) but still remains stuck in an internal loop, waiting for a confirmation that will never arrive.
 
 ### Final Remarks
-- Fair channel is the most common non-reliable channel model used
-- It is impossible to implement URB in *CAMP(n,t)\[-FC, t ≥ n/2]*
+- Fair channel is the most common non-reliable channel model used.
+- It is impossible to implement URB in *CAMP(n,t)\[-FC, t ≥ n/2]*.
 - Failure detectors are used obtain information about the environment, namely what processes are faulty and which are non-faulty.
 - Several FDs for URB:
 	- **Class Θ** (theta): guarantees the existence of at least one trusted process at any time, and eventually, it only includes correct processes.
 		- Provides each process *pi* with a set *trustedi*.
 		- **Accuracy**: the set *trustedi* always contains at least one non-faulty process.
 		- **Liveness**: eventually, the set *trustedi* of any non-faulty process *pi* contains only non-faulty processes.
-		- Weakest FD for implementing URB
+		- Weakest FD for implementing URB.
 	- **Class P** (perfect): accurately identifies crashed processes without false suspicions.
-		- Provides each process *pi* with a set *suspectedi*
+		- Provides each process *pi* with a set *suspectedi*.
 		- **Completeness**: if a process crashes, it eventually appears **permanently** in the *suspectedi* set of all correct processes.
 		- **Strong accuracy**: no process appears in the *suspectedi* set before it crashes.
-		- FD for implementing quiescent and terminating URB
+		- FD for implementing quiescent and terminating URB.
 		- Cannot be implemented in purely asynchronous environments, because of its uncertainty associated with message delays in them. 
 	- **Class ◇P** (eventually perfect): can initially have false suspicions, but eventually, it behaves like a perfect failure detector, accurately identifying crashed processes.
-		- Provides each process *pi* with a set *suspectedi*
+		- Provides each process *pi* with a set *suspectedi*.
 		- **Completeness**: if a process crashes, it will eventually appear in the *suspectedi* set of all correct processes.
-		- **Eventual strong accuracy**: there is a time after which no correct process appears in the *suspectedi* set.
-		- Weakest bounded FD for implementing quiescent URB
+		- **Eventual strong accuracy**: there is a time after which no correct process appears in the *suspectedi* set (weaker property than P).
+		- Weakest bounded FD for implementing quiescent URB.
 		- Weaker than P.
 		- Can be implemented in purely asynchronous environments but requires additional assumptions or mechanisms to address the inherent uncertainty of message delays.
 	- **Class HB** (heartbeat): tracks the liveness of processes based on heartbeat messages.
 		- Provides each process *pi* with an array *HBi\[1...n]* containing integers.
 		- **Completeness**: for each correct process *pi* and each crashed process *pj*, there exists a maximum value that *HBI\[j]* will reach.
 		- **Liveness**: the values in *HBi* are non-decreasing, and for any two correct processes *pi* and *pj*, *HBi\[j]* will increase indefinitely.
-		- Weakest (unbounded) FD for implementing quiescent URB - contrary to P and ◇P, HB can be implemented in asynchronous systems
+		- Weakest (unbounded) FD for implementing quiescent URB - contrary to P and ◇P, HB can be implemented in asynchronous systems.
