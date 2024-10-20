@@ -24,7 +24,7 @@
 ![](./resources/regular-register-example-1.png)
 - The only possible values for *v* are {0, 1, 2}.
 - The only possible values for *v'* are {1, 2}.
-- This is called the ***new/old inversion problem***.
+- This is called the ***new/old inversion problem***, because a read can read an outdated value after reading the updated value.
 
 ##### Why doesn't a regular register have a sequential specification?
 - A regular register only ensures that a read operation returns either the most recent write value or any previous write value. However, this might not match a global sequential order for operations.
@@ -35,7 +35,8 @@ To totally order the read and write operations in such a way that the sequence o
 - Place all the write operations and then the read operations - this is because *R.write(2)* needs to precede *R.read() → 2*
 - On the other hand, as the read is sequential, it imposes a total order on its read operations (process order):
 	- *R.write(0), R.write(1), R.write(2), R.read() → 2, **R.read() → 1***
-- This sequence does not belong on the specification of a sequential register, since once the register reads 2 (the most recent value), it should always return 2 or any future value from subsequent writes. The fact that the register reads 1 later shows that the total order (process order) doesn't respect the sequential model.  
+- This sequence does not belong on the specification of a sequential register, since once the register reads 2 (the most recent value), it should always return 2 or any future value from subsequent writes. The fact that the register reads 1 later shows that the total order (process order) doesn't respect the sequential model. 
+- **Due to the possibility of *new/old inversions*, a regular register cannot have a sequential specification**.
 
 Despite this limitation, regular registers are still very useful:
 - They can be easily built on top of message passing systems
