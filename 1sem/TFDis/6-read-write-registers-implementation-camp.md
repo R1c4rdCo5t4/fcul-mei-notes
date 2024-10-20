@@ -9,6 +9,10 @@
 ![](./resources/system-with-multiple-registers.png)
 
 ### SWMR Regular Register on *CAMP(n,t)\[t < n/2]*
+- A regular register enforces a safety property where the value returned by a read operation is either the last value written or a value written concurrently with the read operation.
+- The algorithm for an SWMR regular register relies on the single writer associating sequence numbers with write operations and broadcasting pairs of values and sequence numbers.
+- Each process saves the pair with the highest sequence number it has seen.
+- Both safety and liveness properties are derived from the "majority of correct processes" assumption (t < n/2), enabling a process to communicate with at least one non-faulty process before completing a read or write.
 ```vhdl
 
 % Client
@@ -16,7 +20,7 @@
 operation REG.write (v) is % This code is only for the single writer pw %
 (1) wsnw ← wsnw + 1;
 (2) broadcast WRITE (v, wsnw);
-(3) wait !ACK WRITE (wsnw) received from a majority of processes;
+(3) wait (ACK WRITE (wsnw) received from a majority of processes;
 (4) return ()
 
 % The code snippets that follow are for every process pi (i ∈ {1,...,n}) %
@@ -24,8 +28,10 @@ operation REG.write (v) is % This code is only for the single writer pw %
 operation REG.read () is % This code is for any process pi %
 (5) reqsni ← reqsni + 1;
 (6) broadcast READ REQ (reqsni);
-(7) wait !ACK READ REQ (reqsni, −, −) received from a majority of processes;
-(8) let ACK READ REQ (reqsni, −, v) be a message received at the previous line with the greatest write sequence number;
+(7) wait (ACK READ REQ (reqsni, −, −) received from a majority of processes;
+(8) let ACK READ REQ (reqsni, −, v) be a message received at the previous line with the greatest write sequence number;		  
+(N1) ...
+(N2) ...
 (9) return (v)
 
 
@@ -61,9 +67,9 @@ when READ REQ (rsn) is received from pj do % (j ∈ {1,...,n}) %
 - With this modification, the writer is not the only process to send write messages anymore.
 
 ```vhdl
-(N1) broadcast WRITE(v, msn); 
-(N2) wait (ACK WRITE (msn) received from a majority of processes);
-(9) return (v).
+(N1) broadcast WRITE(v, msn)
+(N2) wait (ACK WRITE (msn) received from a majority of processes)
+(9) return (v)
 ```
 
 ### Supporting Multiple Writers (MWMR)
@@ -74,7 +80,6 @@ when READ REQ (rsn) is received from pj do % (j ∈ {1,...,n}) %
 - The second modification is important to break ties, and can be done by replacing sequence numbers by timestamps.
 - A timestamp is a pair *<logical time, process identity>* such that:
 	- *⟨sn1, i⟩ < ⟨sn2, j⟩ ≡ ((sn1 < sn2) ∨ (sn1 = sn2 ∧ i < j))*
-
 
 ##### MWMR Atomic Register on *CAMP(n,t)\[t < n/2]* Protocol
 ![](./resources/mwmr-atomic-register-protocol.png)

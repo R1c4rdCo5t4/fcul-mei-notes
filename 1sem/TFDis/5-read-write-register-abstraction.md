@@ -79,5 +79,13 @@ In an atomic register, it is guaranteed that once a write is observed, all subse
 	- As soon as we have an algorithm that implements an atomic register, we can use multiple independent instances of it and the system will behave correctly without any additional control or synchronization.
 - **Atomicity is composable**: this is expected since all objects are specified using real time precedence.
 - **Sequential consistency is not composable**.
+
+In this example, even though the executions are individually sequentially consistent, **when combined**, they produce an execution that violates sequential consistency.
+
 ![](./resources/sequential-consistency-no-composability-example.png)]
-Even though the executions are individually sequentially consistent, when combined, they produce an execution that violates sequential consistency.
+
+- The core of the issue is that each sequentially consistent register can have its own internal "logical time" for ordering operations. When you combine multiple sequentially consistent registers, these independent logical times can conflict with each other, resulting in a combined execution that is no longer sequentially consistent.
+- There is no way to arrange all the operations in E + E' into a single sequence that would satisfy sequential consistency for both R and R' simultaneously:
+	1. *R.write(2)* must precede *R.read()→ 1*
+	2. *R'.write(b)* must precede *R'.read()→ a*
+- To maintain sequential consistency for *R* in the combined execution, *R.read()→ 1* must come after *R.write(1)*. Similarly, for *R'*, *R'.read()→ a* must come after *R'.write(a)*. This leads to conflicting orderings between the two registers, making a sequentially consistent global ordering impossible.
