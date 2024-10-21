@@ -44,7 +44,16 @@ when WRITE (val, wsn) is received from pw do
 when READ REQ (rsn) is received from pj do % (j ∈ {1,...,n}) %
 (12) send ACK READ REQ (rsn, wsni, regi) to pj
 ```
+- *regi* is a local data variable that contains the current value (as known by *pi*) of the regular register REG;
+- *wsni* is a local control variable that keeps the sequence number associated with the value currently saved in *regi*. As far as *pw* is concerned, *wsnw* is also used to generate the increasing sequence numbers associated with the values written into REG;
+- *reqsni* is a local control variable containing the sequence number that *pi* has associated with its last read of REG (these sequence numbers allow every acknowledgment message to be correctly associated with the request that gave rise to its sending).
+- All the local variables used to generate a sequence number are initialized to 0. The register REG is assumed to be initialized to some value (say *v0*). Consequently, all the local variables *regi* are initialized to *v0*.
+
 > The key idea is to associate each written value with a sequence (or version) number.
+
+- This algorithm could be improved for better efficiency.
+- This algorithm has a cost of a read or write operation of **2n messages**.
+- This algorithm has **two communication steps**.
 
 ##### Algorithm Execution Example
 ![](./resources/swmr-regular-register-camp-example-1.png)

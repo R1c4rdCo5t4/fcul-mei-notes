@@ -50,7 +50,7 @@
 
 (D) None of them.
 
-> B) FIFO order delivery.
+> (B) FIFO order delivery.
 
 #### 5. The properties of atomic (total order) broadcast (in asynchronous systems with crash failures) ensure that:
 
@@ -62,7 +62,7 @@
 
 (D) All of the above.
 
-> C) If a correct process broadcasts M1 before M2 then all correct processes deliver M1 before M2.
+> (B) If a correct process delivers M1 before M2 then all correct processes deliver M1 before M2.
 
 #### 6. When using a Perfect Failure Detector (of class P), it is guaranteed that:
 
