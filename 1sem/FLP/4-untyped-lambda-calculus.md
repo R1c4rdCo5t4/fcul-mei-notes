@@ -49,3 +49,5 @@
 	- **First element (fst)**: `fst = λp. p (λx.λy.x)`
 	- **Second element (snd)**: `snd = λp. p (λx.λy.y)`
 		- Example: `pair 1 2` would store `1` and `2` and `fst (pair 1 2)` would return `1`.
+
+> Based on Chapter 5 of Types and Programming Languages, Benjamin C. Pierce, The MIT Press
