@@ -1,3 +1,5 @@
+# Types and Programming Languages
+
 > *"A type system is a **syntactic method** for enforcing **levels of abstraction** in programs. The study of type systems - and of programming languages from a type-theoretic perspective - has important applications in software engineering, language design, high-performance compilers, and security."* - Benjamin C. Pierce
 
 ### Types in Computer Science

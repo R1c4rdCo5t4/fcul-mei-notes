@@ -1,3 +1,5 @@
+
+# Untyped Arithmetic Expressions
 ### Overview
 - **Focus**: building a formal system for modeling untyped arithmetic expressions
 - **Purpose**: introduces basic concepts of operational semantics using arithmetic expressions and is a foundation for more complex typed systems developed later
