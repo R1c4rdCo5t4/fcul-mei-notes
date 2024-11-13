@@ -8,3 +8,7 @@
 
 # ignore Obsidian backups
 .obsidian/backup/
+
+# ignore any private files
+private/
+private/*
