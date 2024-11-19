@@ -4,9 +4,7 @@ Besides the functionality of a system, it's also important to:
 - Identify the **desired qualities**;
 - Ensure that the **system is built to have those qualities**.
 
-While the functionality of a software system is **largely independent** of how the system is **structured**, the architectural design plays a key role in achieving many of the quality attributes of the system, and functional and quality requirements must be considered in all of the design process.
-- Scenarios and tactics provide a **structured approach to achieving quality in software systems**.
-- Analyzing architecture with scenarios **ensures the system meets functional and quality goals**.
+> While the functionality of a software system is **largely independent** of how the system is **structured**, the architectural design plays a key role in achieving many of the quality attributes of the system, and functional and quality requirements must be considered in all of the design process.
 ### Key Concepts
 ##### Quality Attributes
 - Measurable or testable properties that **indicate how well a system satisfies the stakeholder needs**.
@@ -55,3 +53,7 @@ While the functionality of a software system is **largely independent** of how t
 - **Performance**: 1,000 transactions per minute processed with an average latency of 2 seconds.
 - **Availability**: system recovers within a specified time after detecting a fault.
 - **Usability**: cancelling an operation takes less than one second.
+
+### Summary
+- Scenarios and tactics provide a **structured approach to achieving quality in software systems**.
+- Analyzing architecture with scenarios **ensures the system meets functional and quality goals**.
