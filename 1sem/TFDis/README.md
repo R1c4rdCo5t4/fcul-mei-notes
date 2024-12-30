@@ -7,4 +7,5 @@
 4. [Reliable Broadcast with Byzantine Failures](./4-reliable-broadcast-with-byzantine-failures.md)
 5. [Read/Write Register Abstraction](./5-read-write-register-abstraction.md)
 6. [Read/Write Registers Implementation with CAMP](./6-read-write-registers-implementation-camp.md)
-7. [Implementable Agreement Abstraction](./7-implementable-agreement-abstractions.md)
+7. [Implementable Agreement Abstractions](./7-implementable-agreement-abstractions.md)
+8. [Consensus Abstractions](./8-consensus-abstractions.md)
