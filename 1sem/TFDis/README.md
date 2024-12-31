@@ -11,3 +11,4 @@
 8. [Consensus Abstractions](./8-consensus-abstractions.md)
 9. [Consensus in Asynchronous Systems](./9-async-consensus.md)
 10. [Consensus with Failure Detectors](./10-consensus-failure-detectors.md)
+11. [Consensus with Byzantine Failures](./11-consensus-byzantine-failures.md)
