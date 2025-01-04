@@ -106,7 +106,7 @@ The different views correspond to different types of decisions involved in the a
 - **2 modules** (implementation units)
 - **11 components** (runtime units)
 
-#### Module Views
+## Module Views
 - Represent code structures.
 - The system is seen as a collection of implementation units (code and data) - **modules**.
 - Specific (computational) responsibilities are assigned to the modules.
