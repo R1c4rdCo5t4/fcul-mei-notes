@@ -18,8 +18,8 @@
 		- In case coordinator fails, with a **two-phase commit**, which ensures atomicity with a prepare phase and a decision phase
 
 ### Sub-Consensus Problems
-- **Consensus:** the canonical form of agreement - cannot be solved in purely asynchronous systems.
+- **Consensus:** the canonical form of agreement - cannot be solved in the system model *CAMP(n,t)\[t < n/2]*.
 - However, many weaker agreement problems can:
-	- **Renaming:** it is possible to make processes decide different values.
-	- **Approximate agreement:** it is possible to make processes decide numeric values within a bounded difference.
-	- **Safe agreement:** it is possible to make processes decide only when there are no crashes during certain critical steps of the protocol.
+	- **Renaming:** allows processes to decide different values using shared memory with registers.
+	- **Approximate agreement:** allows processes to decide numeric values within a bounded difference ε also using shared memory with registers.
+	- **Safe agreement:** allows processes processes to decide only when there are no crashes during certain critical steps of the protocol (failure-dependent termination condition in the decide phase) using message passing primitives.

@@ -12,12 +12,12 @@
 	- Example: let n=100 processes whose names are made up of eight letters. As there are 26 letters in the alphabet, the size of the namespace is N = 26^8 (n << N).
 - Renaming is an agreement abstraction that allows processes to obtain new names in a new name space whose size M is much smaller than N.
 - Initially a process *pi* knows only *n* and *idi* . It does not know the initial names of the other processes.
-- • It provides the processes with a single operation `new_name()`, which can be **invoked at most once** by a process and returns its new name.
+- It provides the processes with a single operation *new_name()*, which can be **invoked at most once** by a process and returns its new name.
 - Therefore, **M-renaming** is a **one-shot problem** defined by the following properties:
-	- **R-termination**: the invocation of `new_name()` by a correct process terminates.
+	- **R-termination**: the invocation of *new_name()* by a correct process terminates.
 	- **R-validity**: a new name is an integer in the interval \[1..M].
 	- **R-agreement**: no two processes obtain the same new name.
-	- **R-index-independence**: ∀ i, j, if a process whose index is i obtains the new name v, this process could have obtained the very same new name v if its index had been j.
+	- **R-index-independence**: ∀i, j, if a process whose index is i obtains the new name v, this process could have obtained the very same new name v if its index had been j.
 
 #### Implementation in *CAMP(n,t)\[t < n/2]*
 - **Lower bound:** M ≥ 2n – 1
@@ -47,9 +47,10 @@ operation new name(idi) is
 (2) while true do
 (3)     STATE.write(i,⟨idi, propi⟩);
 (4)     statei ← STATE.snapshot();
-(5)     if (∀ j ̸= i : statei[j].prop ̸= propi)
-(6)         then return (propi)
-(7)     else let set1 = {statei[j].prop | (statei[j].prop ̸= ⊥) ∧ (1 ≤ j ≤ n)};
+(5)     if (∀ j ̸= i : statei[j].prop ̸= propi) -- did any other process choose this name?
+(6)         then return (propi) -- if not, return name
+(7)     else -- if so, new proposal
+			let set1 = {statei[j].prop | (statei[j].prop ̸= ⊥) ∧ (1 ≤ j ≤ n)};
 (8)         let free = the increasing sequence 1, 2,... from which
 		    	   the integers in set1 have been suppressed;
 (9)         let set2 = {statei[j].init id | (statei[j].init id ̸= ⊥) ∧ (1 ≤ j ≤ n)};
@@ -60,29 +61,30 @@ operation new name(idi) is
 ```
 
 ### Approximate Agreement Problem
-- Weakened version of consensus where the processes propose real numbers and, instead of an exact agreement, obtain a controlled approximate.
-	- Given an allowed disagreement defined by a positive constant ε, approximate agreement states that the decided values must be in the range of the proposed values, and no two decided values can be further apart than ε.
-- The computability gap separating consensus and approximate agreement lies in the fact that, while approximate agreement cannot be solved in the system model *CAMP(n,t)\[t < n/2]*, consensus cannot.
-- Considering round-based algorithm, going from approximate agreement to consensus would require an infinite number of rounds (i.e., any approximate agreement algorithm may never terminate for ε=0).
-- Each process pi is assumed to propose a value vi, namely a real number belonging to some interval of integers, e.g. the interval \[x..(x + D)], where D is known by the processes, while x is not.
+- **Weakened version of consensus** where the processes propose real numbers and, instead of an exact agreement, obtain a controlled approximate.
+	- Given an allowed disagreement defined by a positive constant **ε**, approximate agreement states that the decided **values must be in the range of the proposed values, and no two decided values can be further apart than ε**.
+- The computability gap separating consensus and approximate agreement lies in the fact that, while approximate agreement can be solved in the system model *CAMP(n,t)\[t < n/2]*, consensus cannot.
+- Considering round-based algorithms, going from approximate agreement to consensus would require an infinite number of rounds (i.e., any approximate agreement algorithm may never terminate for ε=0).
+- Each process *pi* is assumed to propose a value *vi*, namely a real number belonging to some interval of integers, e.g. the interval \[x..(x + D)], where D is known by the processes, while *x* is not.
 - The *ε-approximate agreement* abstraction provides an operation denoted *propose()*, whose invocations satisfy the following properties:
 	- **AA-termination**: the invocation of *propose()* by a correct process terminates.
-	- **AA-validity**: let vmin (resp., vmax) be the smallest (resp., greatest) value proposed by the processes - the value wi decided by a process pi is such that vmin ≤ wi ≤ vmax.
-	- **AA-agreement**: for any pair of processes pi and pj, if pi decides wi and pj decides wj, we have |wi − wj| ≤ ε.
+	- **AA-validity**: let *vmin(resp., vmax)* be the smallest (resp., greatest) value proposed by the processes - the value *wi* decided by a process *pi* is such that *vmin ≤ wi ≤ vmax*.
+	- **AA-agreement**: for any pair of processes *pi* and *pj*, if *pi* decides *wi* and *pj* decides *wj*, we have *|wi − wj| ≤ ε*.
 - Example: one might want values to diverge by at most 1%. In this case, the ratio D/ε would be 100, and log2(⌈D/ε⌉) = 7.
-
+- Unlike consensus, it is possible that no process decides a proposed value (except
+when all processes propose the same value).
 ##### Snapshot-based Approximate Agreement Algorithm for CAMP(n,t)\[t < n/2]
-- The processes execute R = 1 + log2(⌈D/ε⌉) asynchronous rounds.
-- In each round r, processes communicate through a snapshot object SNAP\[r]
-	- For any r, SNAP\[r] is initialized to \[⊥,...,⊥] and is accessed by pi only when it executes r.
-	- SNAP\[r]\[i], r ≥ 1, stores the estimate computed by pi during the round r−1.
+- The processes execute *R = 1 + log2(⌈D/ε⌉)* asynchronous rounds.
+- In each round *r*, processes communicate through a snapshot object *SNAP\[r]*.
+	- For any *r*, *SNAP\[r]* is initialized to \[⊥,...,⊥] and is accessed by *pi* only when it executes *r*.
+	- *SNAP\[r]\[i], r ≥ 1*, stores the estimate computed by *pi* during the round *r−1*.
 - The successive computation of new estimates on each round aims to decrease the distance between processes estimates.
-- **Why does this work?** By running r=1+log2(⌈D/ε⌉) rounds we are guaranteed to reach vmaxR - vminR ≤ ε.
+- **Why does this work?** By running *r=1+log2(⌈D/ε⌉)* rounds we are guaranteed to reach *vmaxR - vminR ≤ ε*.
 
 ##### Implementation
 ```vhdl
 operation propose(vi) is
-(1) esti ← vi; ri ← 0; let R =1+ log2(⌈ Dϵ ⌉);
+(1) esti ← vi; ri ← 0; let R = 1 + log2(⌈Dϵ⌉);
 (2) repeat until (ri = R) do
 (3)     ri ← ri + 1;
 (4)     SNAP[ri].write(i, esti);
@@ -93,9 +95,15 @@ operation propose(vi) is
 (9) return(esti)
 ```
 
+- **Local variables:**
+	- ***ri:*** the local round number, initialized to 0.
+	- ***esti***: *pi*’s current estimate of its decision value. Its initial value is *vi* (the value proposed by *pi*).
+	- ***memi:*** a local array used by *pi* at round *r* to store the value of the snapshot object *SNAP\[r]*.
+	- ***vali:*** a local set, containing the values deposited in *SNAP\[r]*, as read by *pi*.
+
 ### Safe Agreement Problem
 - Provides each process pi the operations *propose()* and *decide()*, which pi can invoke at most once and in that order.
-	- *propose()* allows pi to propose a value, while *decide()* allows it to decide a value.
+	- *propose()* allows *pi* to propose a value, while *decide()* allows it to decide a value.
 - This abstraction is defined by the following properties:
 	- **SG-validity**: a decided value is a proposed value.
 	- **SG-agreement**: no two processes decide distinct values.
@@ -105,14 +113,17 @@ operation propose(vi) is
 
 ##### Algorithm for CAMP(n,t)\[t < n/2]
 - The *propose()* objective is to fill three local data structures:
-	- *values(i)\[x]* contains, as known by pi, the value proposed by px.
-	- *my_view(i)\[x]* contains, as known by pi, the value proposed by px and witnessed by the majority of processes (it knows at least one correct process saw this proposal).
-	- *all_views(i)\[x]* contains pi's knowledge about what px registered in my_view(x).
-- If *all_views(i)\[x]\[y]* = v ≠ ⊥, pi knows that px registered that a majority knows that py proposed v.
-- The operation *decide()* is a "closure" computation: a process pi waits until it knows a non-empty set of processes σ such that:
+	- *values(i)\[x]* contains, as known by *pi*, the value proposed by *px*.
+	- *my_view(i)\[x]* contains, as known by *pi*, the value proposed by *px* and witnessed by the majority of processes (it knows at least one correct process saw this proposal).
+	- *all_views(i)\[x]* contains *pi*'s knowledge about what *px* registered in *my_view(x)*.
+	- If *all_views(i)\[x]\[y]* = v ≠ ⊥, *pi* knows that *px* registered that a majority knows that *py* proposed *v*.
+- The *propose()* operation, broadcasts its proposed value and ensures that a majority of processes receive it.
+	- It gathers views of the proposed values from other processes and builds a local view of what values were proposed by others.
+	- This view is then shared with the other processes to ensure consistent knowledge across the system.
+- The operation *decide()* is a "closure" computation: a process *pi* waits until it knows a non-empty set of processes σ such that:
 	- It knows views of every processes in σ;
 	- σ is closed, i.e., the processes whose values appear in a view of a process of σ are also in σ.
-- When σ is discovered (something that might never happen in case of failures), pi deterministically decides a value proposed by one of the processes in σ.
+	- When σ is discovered (something that might never happen in case of failures), *pi* deterministically decides a value proposed by one of the processes in σ.
 
 ##### Implementation
 ![](./resources/safe-agreement-algorithm.png)

@@ -21,7 +21,7 @@ Arises when one must solve a problem in terms of distributed entities (processor
 
 - An **event** models the execution of a step issued by a process, where a step is either *local* (communication-free local computation), or a *communication step* (the sending or reception of a message).
 - An **execution** E is a partial order on the set of events produced by processes
-	- • *(Synchronous systems)* **E** is the partial order on the set of events produced by the processes, such that all the events occurring in a round r precede all the events of the round r + 1, and, on every round, all sending events, precede all reception events, which in turn precede all local events executed in this round.
+	- *(Synchronous systems)* **E** is the partial order on the set of events produced by the processes, such that all the events occurring in a round r precede all the events of the round r + 1, and, on every round, all sending events, precede all reception events, which in turn precede all local events executed in this round.
 	- *(Asynchronous systems)* **E** is the partial order on the events produced by the processes such that, for each process, E respects the order on its events, and, for any message m sent by a process pi to a process pj , the sending of m by pi occurs before its reception by pj.
 ### Types of Failures
 - **Process failure model**:
