@@ -1,9 +1,10 @@
 # Consensus: Power and Implementability Limit in Crash-Prone Asynchronous Systems
-- **Objective:** understand the relationship between several fundamental agreement abstractions: **Total Order Broadcast**, **State Machine Replication** and **Ledger Objects**.
+- **Objective:** Understand the relationship between several fundamental agreement abstractions: **Total Order Broadcast**, **State Machine Replication** and **Ledger Objects**.
 
 ### Total Order Broadcast
 - TO-broadcast() and TO-deliver() are the two operations associated with Total Order (TO) broadcast.
 - TO-broadcast = URB + TO-delivery.
+- **Multi-shot** communication abstraction.
 - URB can be extended to both FIFO-broadcast and to CO-broadcast.
 - Similarly, it is also possible to extend TO-broadcast, so that, in addition to the fact that the messages must be delivered in the same order, this order respects the **local FIFO** order for each sender process or the global **Causal Order (CO)**.
 - Delivering messages according to causal order is possible in CAMP(n,t) because the causal past of each message can be attached to it.
@@ -18,33 +19,42 @@
 	- *sni* is a sequence number (initialized to 0) used to address the consensus instances.
 
 ```vhdl
-init: sni ← 0; to deliverablei ← ϵ; urb deliveredi ← ∅
+init: sni ← 0; to_deliverablei ← ϵ; urb_deliveredi ← ∅
 
 operation TO broadcast (m) is URB broadcast MSG(m)
 
 when MSG(m) is urb-delivered do
-(1) urb deliveredi ← urb deliveredi ∪ {m}
+(1) urb_deliveredi ← urb_deliveredi ∪ {m}
 
-when (to deliverablei contains messages not yet to-delivered) do
-(2) let m be the first message ∈ to deliverablei not yet to-delivered;
-(3) TO deliver (m)
+when (to_deliverablei contains messages not yet to-delivered) do
+(2) let m be the first message ∈ to_deliverablei not yet to-delivered;
+(3) TO_deliver(m)
 
 background task T is
 (4) repeat forever
-(5)     wait (urb deliveredi \ to deliverablei) ̸= ∅;
-(6)     let seqi = (urb deliveredi \ to deliverablei);
+(5)     wait (urb_deliveredi \ to_deliverablei) ̸= ∅;
+(6)     let seqi = (urb_deliveredi \ to_deliverablei);
 (7)     order the messages in seqi;
 (8)     sni ← sni + 1;
-(9)     resi ← CS[sni].propose (seqi);
-(10)    to deliverablei ← to deliverablei ⊕ resi
+(9)     resi ← CS[sni].propose(seqi);
+(10)    to_deliverablei ← to_deliverablei ⊕ resi
 (11) end repeat
 ```
-
+- **The core of the algorithm is the background task**.
+- This task is an endless asynchronous distributed iteration, and each iteration determines a sequence of messages that each process will append at the tail of its local queue *to_deliverablei* - according to the successive iterations and the fact taht each iteration defines the same sequence of messages to add to the queue, all the processes will be able to TO-delivery the messages in the same order.
+- A consensus instance is associated with each loop iteration in order for the processes to add the same sequence of messages to their variables *to_deliverablei*.
+- **Main idea:**
+	- A process *pi* first waits for messages that have been urb-delivered but not yet added to the sequence *to_deliverablei*.
+	- Then, *pi* orders these messages in *seqi* and proposes it to the next consensus instance, namely *CS\[sni]*.
+	- The way messages are ordered in *seqi* may be arbitrary, the important here is that *seqi* is a sequence.
+	- Finally, the result of *CS\[sni].propose(seqi)* is stored in the variable *resi*, which now holds the sequence of messages decided by the current consensus instance.
+	- The sequence *resi* (proposed by some process) is the sequence of messages that **all processes agreed upon during their *sn*-th iteration**, and each process appends it to its variable *to_deliverable*.
+- The loop is asynchronous, and some *seqi* proposed by *pi* may contain few messages, while other may contain many messages. Moreover, several consensus instances can be concurrent, but distinct consensus instances are totally independent.
 - **Correctness:**
 	- Most of the TO-broadcast properties are trivially satisfied using URB and the code in lines 2-3.
 	- TO-delivery is ensured by using decisions of consensus instances in the same order on all processes and delivering messages in deterministic order.
 - **Improvements:**
-	- Propose message ids of the form 〈m.sender, m.seq_nb〉 instead of the messages on the consensus instances.
+	- Propose message ids of the form <m.sender, m.seq_nb> instead of the messages on the consensus instances.
 	- Limit the number of consensus running in parallel.
 	- In the algorithm, urb_deliveredi and to_deliverablei are never cleaned. In practice, a garbage collection mechanism should be added.
 
@@ -62,15 +72,14 @@ operation CS.propose (vi) is
 - This means that one can be implemented with the other, proving that **consensus and TO-broadcast are equivalent** in CAMP(n,t).
 
 ### The State Machine Approach
-- Practical systems provide clients with services. A *service* is usually defined by a set of commands that each client can invoke.
-	- It is assumed that a client invokes one command at a time (it is sequential).
+- Practical systems **provide clients with services**. A *service* is usually defined by a set of commands that each client can invoke.
+	- It is assumed that a client invokes one command at a time (sequential).
 	- The state of the service is encoded in internal variables that are hidden from clients. 
 	- From the client's point of view, the service is defined by its interface (commands to be invoked).
 	- A command (request) may cause a modification of the service's state. It may also produce outputs that are sent back to the invoking client.
 	- It is assumed that outputs are completely determined by the initial state and the sequence of commands that have already been processed (**deterministic service**).
-- To tolerate faults, a natural idea is replicating the service on distinct machines.
+- To tolerate faults, a natural idea is **replicating the service on distinct machines**.
 - The *state machine replication* technique is a methodology for making a service fault tolerant. The state of the service is replicated on several machines that can communicate with one another through the network.
-
 - Ideally, the replication must be transparent to the clients: everything must appear as if the service was implemented in a single server - *one-copy equivalence* consistency condition. To attain this, machines must coordinate themselves:
 	- It must be ensured that all machines execute the same commands in the same order.
 	- This way, the copies of the service state will not diverge despite crashes.

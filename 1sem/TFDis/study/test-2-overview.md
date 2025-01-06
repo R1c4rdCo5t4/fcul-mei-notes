@@ -18,8 +18,38 @@
 		- In case coordinator fails, with a **two-phase commit**, which ensures atomicity with a prepare phase and a decision phase
 
 ### Sub-Consensus Problems
-- **Consensus:** the canonical form of agreement - cannot be solved in the system model *CAMP(n,t)\[t < n/2]*.
+- **Consensus:** the canonical form of agreement - cannot be solved in the system model *CAMP(n,t)\[t < n/2]*
 - However, many weaker agreement problems can:
-	- **Renaming:** allows processes to decide different values using shared memory with registers.
-	- **Approximate agreement:** allows processes to decide numeric values within a bounded difference ε also using shared memory with registers.
-	- **Safe agreement:** allows processes processes to decide only when there are no crashes during certain critical steps of the protocol (failure-dependent termination condition in the decide phase) using message passing primitives.
+	- **Renaming:** allows processes to decide different values using shared memory with registers
+	- **Approximate agreement:** allows processes to decide numeric values within a bounded difference ε also using shared memory with registers
+	- **Safe agreement:** allows processes processes to decide only when there are no crashes during certain critical steps of the protocol (failure-dependent termination condition in the decide phase) using message passing primitives
+
+### Consensus Equivalent Abstractions
+- **Total-Order Broadcast**
+	- All messages are delivered in the same order on all correct processes
+	- Applies even for completely unrelated messages
+	- **Equivalent to consensus**
+		- **TO-Broadcast → Consensus**: using to-broadcast, a process proposes values and waits for the first TO-delivered value to achieve consensus
+		- **Consensus → TO-Broadcast**: consensus instances ensure ordered agreement, enabling TO-broadcast implementation
+- **State Machine**
+	- Fault-tolerant approach where the service's state is replicated across machines
+	- Commands are processed in the same order across replicas to maintain consistency
+	- Relies on to-broadcast to synchronize state updates across replicas
+- **Sequential Specification of Objects**
+	- Describes an object’s behavior with its **initial state**, **operations** and **state transitions**
+	- Each operation includes:
+		- **Pre-condition**: state before execution
+		- **Post-condition**: result and state after execution
+	- Operations are modeled using a **transition function**: δ(s, op(param)) → ⟨s', result⟩
+- **Consensus-based Universal Construction**
+	- Uses **to-broadcast** to build fault-tolerant distributed objects
+	- Clients invoke operations and servers apply them sequentially and return results
+	- Ensures all non-faulty processes execute the same operation sequence
+- **Ledger Object**
+	- **Append-only atomic data structure with immutable history** ensuring sequential consistency
+	- **Comparisons**
+		- vs Blockchain: blockchains are a specific type of ledger with cryptographic linking and additional features like decentralization and trust mechanisms
+		- vs Read/Write Registers: ledgers prevent overwriting data and retain all values, unlike registers
+		- vs State Machine: ledgers store full history, while state machines only store the latest state
+- The distributed computing models *CAMP(n,t)\[CONS]*, *CAMP(n,t)\[TO-broadcast]* and *CAMP(n,t)\[LEDGER]* are equivalent → **they have the same computability power**
+- These models are enough for implementing the state machine replication approach → **a universal construction**
