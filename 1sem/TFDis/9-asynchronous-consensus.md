@@ -1,9 +1,9 @@
 # Implementing Consensus in Enriched CrashProne Asynchronous Systems
-- Consensus is ***impossible*** in purely asynchronous systems.
-- R/W registers in consensus.
-- How do we deal with consensus impossibility?
-	- Make the consensus problem weaker, adding assumptions to *CAMP(n,t)*
-- Algorithm for asynchronous randomized consensus.
+- Consensus is ***impossible*** in purely asynchronous systems with failures.
+- How do we deal with this impossibility?
+	- Make the consensus problem weaker
+	- Add assumptions to *CAMP(n,t)*
+- We present algorithms for asynchronous randomized consensus.
 
 ### Consensus Impossibility
 - Solving consensus in asynchronous systems subject to failures is ***impossible***.
@@ -11,6 +11,10 @@
 	- a **crashed process** from
 	- a **slow process** or
 	- a **process with slow communication**
+- How to we enrich the asynchronous system model?
+	- Assumption on **message deliveries** - Message Scheduling
+	- Assumption about **failures** - Failure Detectors
+	- **Randomization** - Local Coin (LC) or Common Coin (CC)
 
 ### Synchrony Rules Out Failure Uncertainty
 - Consider a problem where two processes *pi* and *pj* have input values used to compute a function *f* as follows:
@@ -26,7 +30,7 @@
 ### Asynchrony Cannot Rule Out Uncertainty
 - A process can use a local clock and an “estimate” of the round-trip delay, but asynchronous systems give no guarantee this estimate is an upper bound on such delay during an execution.
 	1. If the estimate is incorrect, *pi* returns *f(vi ,⊥)* when the timer expires, while it should wait a bit more and return *f(vi ,vj)* - **violates safety** (incorrect result).
-	2. If pi does not use a timer and pj crash before sending its value, it will wait forever, violating liveness (no result is ever returned)
+	2. If pi does not use a timer and pj crash before sending its value, it will wait forever, **violating liveness** (no result is ever returned)
 - This shows that it is **impossible** to always guarantee both **safety** and **liveness** in fail-prone asynchronous systems.
 
 ![](./resources/async-consensus-impossibility.png)
@@ -72,10 +76,10 @@ end operation
 - In both cases there are many problems which are not computable, but, in asynchronous crash-prone distributed computing, the limits to computability reflect the difficulty of making decisions in the face of the uncertainty created by the environment (mainly asynchrony and failures).
 - The following table summarizes fundamental results of distributed computability in read/write and message-passing asynchronous crash-prone systems:
 
-| Communication type     | Read/write register | Consensus                 |
-| ---------------------- | ------------------- | ------------------------- |
-| Read/write system      | given for free      | impossible even for t = 1 |
-| Message-passing system | requires t < n/2    | impossible even for t = 1 |
+| Communication type     | Read/write register | Consensus               |
+| ---------------------- | ------------------- | ----------------------- |
+| Read/write system      | given for free      | impossible with crashes |
+| Message-passing system | requires t < n/2    | impossible with crashes |
 
 # Asynchronous Consensus Protocols
 ### Message Scheduling Assumption
@@ -94,6 +98,16 @@ end operation
 
 ##### Binary Consensus in *CAMP(n,t)\[t < n/2,MS]*
 ![](./resources/binary-consensus-ms.png)
+
+- The operation *broadcast()* used at line 4 and line 15 is a "best-effort broadcast" - it is not a reliable broadcast, but a simple "for all processes send this"
+- After it has initialized the variables (line 1), a process *pi* executes an asynchronous sequence of rounds, synchronized by the reception of *n-t* messages at every round.
+- During a round, *pi* first broadcasts the message *EST(ri, esti, weighti)*, which carries its current local state (line 4) and waits until it has received a message *EST(ri,-,-)* from *n-t* processes (line 5).
+- Then, according to the values it has received during the current round, *pi* updates its local state (lines 6-14).
+	- If there is a value *b* whose weight is a majority, *pi* adopts it as its new estimate (lines 6-7).
+	- Otherwise, *pi* adopts the value it has received most often as its new estimate (lines 8-10).
+- Then, *pi* computes the weight of *esti*, namely the number of processes that voted *esti* (line 12).
+- Finally, if there is an estimate value *v* that has been selected by at least *x+1* processes, each with a (possible different) majority weight, *pi* adopts and decides it (line 14 and 16).
+- Moreover, as it will stop executing after having decided, before deciding *pi* broadcasts the messages *EST(ri + 1, esti, n − t)* and *EST(ri + 2, esti, n − t)* in order to prevent a possible deadlock - a process waiting for a message from a correct process that has already decidied, when up to *t* processes crash.
 
 ### Enriching CAMP(n,t)\[t < n/2] with Randomization
 - In a randomized computation model, in addition to deterministic statements, processes can make random choices at certain steps.
