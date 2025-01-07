@@ -107,7 +107,7 @@ end operation
 	- Otherwise, *pi* adopts the value it has received most often as its new estimate (lines 8-10).
 - Then, *pi* computes the weight of *esti*, namely the number of processes that voted *esti* (line 12).
 - Finally, if there is an estimate value *v* that has been selected by at least *x+1* processes, each with a (possible different) majority weight, *pi* adopts and decides it (line 14 and 16).
-- Moreover, as it will stop executing after having decided, before deciding *pi* broadcasts the messages *EST(ri + 1, esti, n − t)* and *EST(ri + 2, esti, n − t)* in order to prevent a possible deadlock - a process waiting for a message from a correct process that has already decidied, when up to *t* processes crash.
+- Moreover, as it will stop executing after having decided, before deciding *pi* broadcasts the messages *EST(ri + 1, esti, n − t)* and *EST(ri + 2, esti, n − t)* in order to prevent a possible deadlock - a process waiting for a message from a correct process that has already decided, when up to *t* processes crash.
 
 ### Enriching CAMP(n,t)\[t < n/2] with Randomization
 - In a randomized computation model, in addition to deterministic statements, processes can make random choices at certain steps.

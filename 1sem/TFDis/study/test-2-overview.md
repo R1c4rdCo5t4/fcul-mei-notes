@@ -123,3 +123,48 @@
 		- **Deciding in One Communication Step**
 			- Optimized for failure-free scenarios
 			- Only possible when *t < n/3*
+
+### Consensus with Failure Detectors
+- **P Failure Detector** (Perfect/Perpetual)
+	- **Completeness:** all crashed processes are eventually suspected
+	- **Strong Accuracy:** no false suspicions before crashes
+	- Can easily implement consensus - makes CAMP almost as strong as a synchronous system (provides more than the minimal information required to solve consensus)
+- **◇P Failure Detector** (Eventual Strong Accuracy)
+	- Not a perpetual failure detector - weaker than P
+	- Cannot be implemented in CAMP - requires eventual synchrony
+	- Sufficient for solving consensus consensus since it allows for temporary inaccuracies (anarchy period) while still ensuring eventual completeness and accuracy
+- **◇SYNC** (Eventually Synchronous System)
+	- Starts asynchronous (unbounded delays) and becomes synchronous after an unknown **Global Stabilization Time (GST)**
+	- Message delays are bounded by **δ** only after GST
+- **Ω Failure Detector** (Eventual Leader)
+	- Guarantees that after some unknown time, all processes agree on the same correct leader
+	- **Weakest failure detector for solving consensus** - computability lower bound
+	- Represents the minimal information about failures needed for solving consensus
+	- **Perfect scenario:** if Ω works perfectly, consensus can be achieved in just 2 communication steps - satisfies zero-degradation
+	- **Implementing Ω with Minimal Assumptions**
+		- **Eventual timely channel:** message transit time becomes bounded by δ after some unknown time τ - values of δ and τ are unknown to processes
+		- **Eventual t-source:** a non-faulty process has t output channels that are eventually timely
+		- **Goal:** elect the least suspected non-faulty process as the leader in *CAMP(n,t)\[◇t-SOURCE]*
+
+![](../resources/limit-for-solving-consensus.png)
+
+- **Indulgence:** an algorithm is indulgent if it preserves safety regardless of failure detector behavior, though termination may be compromised
+- **Zero-Degradation:** a crash in one consensus round does not degrade performance of future rounds - consensus is achieved efficiently even after failures
+- **Paxos**
+	- Classical consensus algorithm adapted for *CAMP(n,t)\[t < n/2, Ω]*
+	- **Alpha Abstraction:** provides a single operation *alpha()* to return a decision value, ensuring safety properties - validity, agreement, convergence and termination
+	- **Alpha as Write-Once Register:** stores the first value written and holds it forever
+	- **Paxos-Style Consensus in *CAMP(n,t)\[ALPHA, Ω]***
+		- **Separation of Safety and Liveness**
+			- **Alpha** ensures safety by holding the first written value - shared one-shot storage object
+			- **Ω** eventually elects the leader to write the decision in Alpha
+		- **Algorithm**
+			- Processes iterate asynchronously until a leader (via Ω) writes a decision to Alpha
+			- Leader writes decision - non-leaders adopt it
+			- Consensus achieved through minimal coordination
+- **Conclusion**
+	- Consensus can be solved in CAMP with additional assumptions
+		- **Message Scheduling (MS)**
+		- **Randomization with LC and CC**
+		- **Failure Detector P or ◇P** (on top of underlying synchronized system)
+		- **Eventual Leader Abstraction Ω** (on top of eventually synchronized system)
