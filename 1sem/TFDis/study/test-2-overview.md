@@ -168,3 +168,20 @@
 		- **Randomization with LC and CC**
 		- **Failure Detector P or ◇P** (on top of underlying synchronized system)
 		- **Eventual Leader Abstraction Ω** (on top of eventually synchronized system)
+
+### Consensus with Byzantine Failures
+- With **byzantine failures**, processes may act maliciously or unpredictably, requiring stricter consensus guarantees
+- **Binary Value (BV) Broadcast**
+	- Reliable all-to-all broadcast for binary values
+	- Ensures all correct processes eventually agree on a common set of values
+	- Resilient up to *t < n/3*, with message cost of O(n²)
+	- Does not explicitly terminate
+- **Randomized Byzantine Binary Consensus**
+	- Combines BV-broadcast with a common coin (CC) to reach agreement
+		- Handles *t < n/3* byzantine failures
+		- Requires constant rounds (on average) and O(n²) messages
+	- Uses a cryptographic protocol in the common coin to ensure random bits are revealed securely
+- **Byzantine Multi-Valued Consensus**
+	- Extends binary consensus to multi-valued inputs, used for state machine replication
+	- Combines **Byzantine Reliable Broadcast (BRB)** with binary consensus instances
+	- Ensures agreement across all correct processes
