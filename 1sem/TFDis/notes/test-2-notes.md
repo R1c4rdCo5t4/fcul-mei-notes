@@ -82,7 +82,7 @@
 		- The CN of objects such as a **stack** and a **queue** is 2
 		- The CN of the **k-sliding window register** is k (k=1 means it's just an atomic register)
 		- The CN of a **ledger** is infinite
-- The consensus number definition that any abstraction (object) whose **consensus number is greater than 1 cannot be implemented in *CAMP(n,t)\[t < n/2]****
+- The consensus number definition that any abstraction (object) whose **consensus number is greater than 1 cannot be implemented in *CAMP(n,t)\[t < n/2]***
 
 | Communication type     | Read/write register | Consensus               |
 | ---------------------- | ------------------- | ----------------------- |
