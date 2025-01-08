@@ -10,11 +10,11 @@
 - **Early Deciding IC**
 	- Has min(f+2, t+1) lower bound
 	- Predicate Ri^r-1 = UP^r = Ri^r, meaning **no process crashed, so decision can be made**
-- NBAC (Non-Blocking Atomic Commitment)
+- **NBAC** (Non-Blocking Atomic Commitment)
 	- Transaction/job split into multiple processes
 	- All of them must agree on the same decision **(all or nothing)**: "commit" (yes) or "abort" (no)
-	- Can be implemented with
-		- **Trusted coordinator** that orchestrates multiple processes
+	- Can be implemented
+		- With a **Trusted coordinator** that orchestrates multiple processes
 		- In case coordinator fails, with a **two-phase commit**, which ensures atomicity with a prepare phase and a decision phase
 
 ### Sub-Consensus Problems
@@ -32,9 +32,9 @@
 		- **TO-Broadcast → Consensus**: using to-broadcast, a process proposes values and waits for the first TO-delivered value to achieve consensus
 		- **Consensus → TO-Broadcast**: consensus instances ensure ordered agreement, enabling TO-broadcast implementation
 - **State Machine**
-	- Fault-tolerant approach where the service's state is replicated across machines
+	- Fault-tolerant approach where the service's state is **replicated across machines**
 	- Commands are processed in the same order across replicas to maintain consistency
-	- Relies on to-broadcast to synchronize state updates across replicas
+	- Relies on **TO-broadcast** to synchronize state updates across replicas
 - **Sequential Specification of Objects**
 	- Describes an object’s behavior with its **initial state**, **operations** and **state transitions**
 	- Each operation includes
@@ -42,15 +42,16 @@
 		- **Post-condition**: result and state after execution
 	- Operations are modeled using a **transition function**: δ(s, op(param)) → ⟨s', result⟩
 - **Consensus-based Universal Construction**
-	- Uses **to-broadcast** to build fault-tolerant distributed objects
+	- Generic way to build fault-tolerant distributed shared objects
+	- Uses **TO-broadcast**
 	- Clients invoke operations and servers apply them sequentially and return results
 	- Ensures all non-faulty processes execute the same operation sequence
 - **Ledger Object**
 	- **Append-only atomic data structure with immutable history** ensuring sequential consistency
 	- **Comparisons**
-		- vs Blockchain: blockchains are a specific type of ledger with cryptographic linking and additional features like decentralization and trust mechanisms
-		- vs Read/Write Registers: ledgers prevent overwriting data and retain all values, unlike registers
-		- vs State Machine: ledgers store full history, while state machines only store the latest state
+		- **vs Blockchain:** blockchains are a specific type of ledger with cryptographic linking and additional features like decentralization and trust mechanisms
+		- **vs Read/Write Registers:** ledgers prevent overwriting data and retain all values, unlike registers
+		- **vs State Machine:** ledgers store full history, while state machines only store the latest state
 - The distributed computing models *CAMP(n,t)\[CONS]*, *CAMP(n,t)\[TO-broadcast]* and *CAMP(n,t)\[LEDGER]* are equivalent → **they have the same computability power**
 - These models are enough for implementing the state machine replication approach → **a universal construction**
 
@@ -63,14 +64,18 @@
 - **Do we wait or move on from a process not responding?**
 	- Synchrony rules out failure uncertainty, unlike asynchrony
 	- The uncertainty on the state of the slow process is controlled by a timeout value
-	- With asynchrony, we either violate **safety** (incorrect result) or **liveness** (no result is ever returned) - **FLP impossibility**
+	- With asynchrony, we either violate **safety** (incorrect result) or **liveness** (no result is ever returned)
+	- **FLP impossibility** - states that in an asynchronous system with at least one process failure, it is impossible to solve consensus 
 	- Due to this, for any given algorithm, it is possible to find an execution that can run forever **(breaking termination)** or in which different correct processes decide different values **(breaking agreement)**
 - How do we deal with this impossibility?
 	- Make the consensus problem weaker
+		- **Renaming**
+		- **Approximate Agreement**
+		- **Safe Agreement**
 	- Add assumptions to *CAMP(n,t)*
-		- Assumption on **message deliveries** - Message Scheduling
-		- Assumption about **failures** - Failure Detectors
-		- **Randomization** - Local Coin (LC) or Common Coin (CC)
+		- **Message Scheduling**: assumption on message deliveries
+		- **Failure Detectors:** assumption about failures
+		- **Local Coin (LC) or Common Coin (CC):** randomization to break ties
 - **Consensus Number (CN)**
 	- Measure of the "power" of a type of object (like a stack, queue or read/write register) in solving the **consensus problem** in a distributed system with multiple processes
 	- Indicates how many processes can reach consensus using a given type of object
