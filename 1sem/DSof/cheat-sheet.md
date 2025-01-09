@@ -1,0 +1,114 @@
+- **Software Qualities**
+	- **Reliability:** availability, fault tolerance, recoverability, consistency, ...
+	- **Maintability:** modularity, reusability, changeability, testability, readability, flexibility, ...
+	- **Extensibility:** scalability, flexibility, modularity, configurability, ...
+	- **Performance:** efficiency, throughput, latency, responsiveness, concurrency, ...
+	- **Usability:** accessibility, operability, responsiveness, ...
+- **Design Principles**
+	- **Simplicity:** focus on minimizing complexity to improve clarity and maintability
+	- **Decomposition/Modularity:** organize software into small independent modules (higher cohesion, lower coupling)
+		- **Information Hiding**: expose only absolutely necessary to the outside, reducing complexity and interdependencies
+		- **Encapsulation**: fields and methods within a single unit to ensure that the internal workings are protected from outside interference
+	- **Separation of Concerns:** each element focused on a specific aspect/functionality
+	- **Abstraction:** avoid repetition and improve code reuse
+- **Complexity Metrics**
+	- **Halstead Volume:** based on number of operators and operands
+	- **Cyclomatic Complexity:** number of linearly independent paths through the code - used to increase test coverage
+	- **Maintability Index:** uses Halstead volume, cyclomatic complexity and LoC
+	- **Information Flow Complexity:** based on the data flow between modules
+- **Architectural Views**
+	- **Module Views (Implementation):** shows how the system is structured as a set of implementation units - **decomposition, uses, layered, class**
+	- **C&C Views (Execution):** shows how the system is structured as a set of elements with runtime behaviors **(components)** and interactions **(connectors)** - **process, concurrency, shared data, client-server**
+	- **Allocation Views (Deployment)**: shows how the system relates to non-software structures in its environment (CPUs, file systems, networks, etc.) - **allocates to, deployment, implements**
+- **Module Views**
+	- **Decomposition View**
+		- Implementation units as **modules** and **submodules**
+		- Relation "is-part-of"
+		- Constraints: no loops; child can only have one parent
+	- **Uses View**
+		- Reveals which modules **use** which other modules
+		- Its correctness depends on the correctness of the other
+		- Relation "uses"
+		- No constraints, however dependency chains should not be long
+	- **Generalization View**
+		- Interface/class inheritance or realization
+		- Relation "is-a"
+		- Constraints: no cycles; a child cannot be a generalization of one or more of its ancestors
+	- **Layered View**
+		- Division of the software into units that represent a grouping of module
+		- Relation "allowed-to-use"
+		- Constraints: each element is assigned to only one layer; at least two layers; lower layer not allowed to use a layer above
+	- **Data Model View**
+		- Data entities and their relationships
+		- Relations "one-to-one", "one-to-many", "many-to-one" and "many-to-many"
+		- Constraints: restrictions on intra and inter-entity dependencies
+- **C&C Views**
+	- **Dataflow**
+		- Functional transformation process inputs to produce outputs
+		- Pipe-and-filter, batch sequential
+	- **Call-Return**
+		- Components receive control-and-data from other components and when they're finished executing, return control to the component that invoked them
+		- Client-server, p2p, SOA, microservices
+	- **Event-Based**
+		- Control transfers not through explicit calls or invocations but through the occurrence of events
+		- Components can publish and/or subscribe to events
+		- Pub/sub, SOA
+	- **Repository**
+		- Large stores of persistent data
+		- Large central or several central databases in which persistent data is stored
+		- Shared-data, blackboard
+- **Allocation Views**
+	- **Deployment view:** describes the mapping between the software's components and connectors and the hardware of the computing platform on which the software executes
+	- **Install view:** describes the mapping between the software's components and structures in the file system of the production environment
+	- **Work assignment view:** describes the mapping between the software's modules and the people, teams or organizational work units tasked with the development of those modules
+- **Architectural Styles**
+	- **Module-Centered**
+		- **Layered:** structures system into layers organized hierarchically
+	- **C&C**
+		- **Data-Flow**
+			- **Batch Sequential**
+				- Independent components transform data sequentially with each transformation step completed before the next step begins, as a whole batch rather than a stream
+				- **Advantages:** reusability, modifiability, simplicity, no concurrency issues
+				- **Disadvantages:** not fault tolerant, no parallelism, cannot deal with streams
+			- **Pipe-and-Filter**
+				- Sequential and incremental processing of data streams that are processed until there is no more data to process
+				- **Advantages:** performance (parallelism), simplicity, reusability, modifiability
+				- **Disadvantages:** data structures should be simple, no interaction between components, not good in interactive applications, may force lowest common denominator
+		- **Repository**
+			- **Shared-Data**
+				- Passive repository in a shared-data store, such as shared file
+				- **Advantages:** consistency, synchronization, interoperability
+				- **Disadvantages:** concurrency issues, bottlenecks, dependency and tight coupling
+			- **Blackboard**
+				- Active repository that sends notification to subscribers when data of interest is changed
+				- **Advantages:** efficiency, fault tolerance, scalability, flexibility, extensibility, performance
+				- **Disadvantages:** invisible data flow, bottleneck, single point of failure
+		- **Event-Based**
+			- **Pub/Sub**
+				- Components publish and subscribe to events with a message broker/dispatcher that is responsible to notify subscribers
+				- **Advantages:** evolution and reuse
+				- **Disadvantages:** implicit execution control, hard to ensure correctness, order of message delivery, latency
+		- **Call-Return**
+			- **Client-Server**
+				- Clients invoke services from servers and wait for the responses of those requests
+				- **Advantages:** modifiability, reusability and scalability
+				- **Disadvantages:** bottleneck and single point of failure
+			- **Peer-to-peer**
+				- Distributed computing strategy where cooperating peers that request services of one another
+				- **Advantages:** availability, scalability, highly distributed
+				- **Disadvantages:** security, decentralization
+			- **Broker**
+				- Remote service invocation is done transparently via a broker responsible for coordinating the interaction
+				- **Advantages:** location transparency, changeability, portability
+				- **Disadvantages:** performance, bottleneck, single point of failure, security attacks, testability
+			- **SOA**
+				- Independent number of consumers and providers of distributed services with a service bus that redirects and transforms between consumers and providers
+				- **Advantages:** interoperability
+				- **Disadvantages:** complexity, evolution, performance
+			- **Microservices**
+				- Set of small independent services that can be installed separately forming a whole cohesive system
+				- Can be developed using different technologies and managed by different teams
+				- Opposite of a monolith
+				- Closely related to the deployment allocation view
+				- **Advantages:** scalability, modifiability, availability, reliability
+				- **Disadvantages:** reliability, deployability, performance
