@@ -66,6 +66,11 @@ Horizontal scalability is achieved by replicating the monolith across multiple s
 - Dictates that the deployment unit should contain only one service or a very small, cohesive set of service.
 - Independently installed by fully automatable processes.
 - **Advantages:**
+	- Scalability - can be scaled independently
+	- Modifiability - loose coupling, continuous delivery & deployment
+	- Availability - linked to deploying new versions
+	- Reliability - failures in one microservice do not propagate
+- **Disadvantages:**
 	- **Complexity** introduced by the distribution.
 	- **Deployability** is more challenging.
 	- **Performance:**

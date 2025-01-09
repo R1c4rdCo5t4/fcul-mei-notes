@@ -46,7 +46,7 @@
 ![](./resources/software-product-quality.png)
 ## Design Principles
 - **Simplicity/KISS**: focus on minimizing complexity to improve clarity and maintainability (Keep It Simple Stupid).
-- **Modularity**: organize software into independent modules, making the system easier to understand, test and maintain.
+- **Modularity**: organize software into independent modules, making the system easier to understand, test and maintain - higher cohesion, lower coupling.
 - **Separation of Concerns**: divide the system into distinct sections, each focused on a specific aspect or functionality.
 - **Abstraction/DRY**: promote the use of abstraction to avoid repetition, improve code reuse and simplify maintenance (Don't Repeat Yourself).
 - **Anticipate Change**: design software with future modifications in mind, reducing the impact of changes.
