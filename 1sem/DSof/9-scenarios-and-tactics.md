@@ -45,9 +45,9 @@ Besides the functionality of a system, it's also important to:
 
 ### Analysis Techniques
 - Evaluate architecture alignment with quality attributes using:
-  - **Queuing Network Theory**: for throughput and latency analysis.
-  - **Reliability Block Diagrams**: for reliability estimation.
-  - **Fault Trees**: for failure analysis.
+	- **Queuing Network Theory**: for throughput and latency analysis.
+	- **Reliability Block Diagrams**: for reliability estimation.
+	- **Fault Trees**: for failure analysis.
 
 ### Examples of Scenarios
 - **Performance**: 1,000 transactions per minute processed with an average latency of 2 seconds.

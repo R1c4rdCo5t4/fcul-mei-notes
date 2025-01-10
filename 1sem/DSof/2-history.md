@@ -44,7 +44,7 @@ Normal design is associated with lower risk, cost, communication, maintenance an
 Focuses on creating good solutions to computing and information processing problems, namely in producing software systems with **quality**, **on time and within budget**, **satisfying the needs of customers and users**, **by applying systematic and disciplined approaches to development and maintenance**.
 
 #### Is Software an Engineering Discipline?
-Yes, because
+- Yes, because:
 	- **software developers build machines**
 	- **programs are often complex constructs**, demanding engineering-like disciplines
 	- **software interacts with the world**, serving mankind by solving real world problems

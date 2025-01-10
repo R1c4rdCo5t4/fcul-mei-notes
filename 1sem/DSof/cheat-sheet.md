@@ -11,6 +11,8 @@
 		- **Encapsulation**: fields and methods within a single unit to ensure that the internal workings are protected from outside interference
 	- **Separation of Concerns:** each element focused on a specific aspect/functionality
 	- **Abstraction:** avoid repetition and improve code reuse
+- **Architectural Drivers**
+	- Critical requirements and constraints that shape the system's architecture
 - **Complexity Metrics**
 	- **Halstead Volume:** based on number of operators and operands
 	- **Cyclomatic Complexity:** number of linearly independent paths through the code - used to increase test coverage
@@ -63,46 +65,67 @@
 	- **Work assignment view:** describes the mapping between the software's modules and the people, teams or organizational work units tasked with the development of those modules
 - **Architectural Styles**
 	- **Module-Centered**
-		- **Layered:** structures system into layers organized hierarchically
+		- **Layered**
+			- Structures system into layers organized hierarchically
+			- **Components:** layers (groups of modules/services)
+			- **Connectors:** procedure calls, APIs between layers
 	- **C&C**
 		- **Data-Flow**
 			- **Batch Sequential**
 				- Independent components transform data sequentially with each transformation step completed before the next step begins, as a whole batch rather than a stream
+				- **Components:** transformers that process entire batches of data
+				- **Connectors:** data transfer mechanisms between transformers
 				- **Advantages:** reusability, modifiability, simplicity, no concurrency issues
 				- **Disadvantages:** not fault tolerant, no parallelism, cannot deal with streams
 			- **Pipe-and-Filter**
 				- Sequential and incremental processing of data streams that are processed until there is no more data to process
+				- **Components:** filters (data transformers)
+				- **Connectors:** pipes (unidirectional data streams between filters)
 				- **Advantages:** performance (parallelism), simplicity, reusability, modifiability
 				- **Disadvantages:** data structures should be simple, no interaction between components, not good in interactive applications, may force lowest common denominator
 		- **Repository**
 			- **Shared-Data**
 				- Passive repository in a shared-data store, such as shared file
+				- **Components:** central data store and data accessors
+				- **Connectors:** data access protocols, database connections
 				- **Advantages:** consistency, synchronization, interoperability
 				- **Disadvantages:** concurrency issues, bottlenecks, dependency and tight coupling
 			- **Blackboard**
 				- Active repository that sends notification to subscribers when data of interest is changed
+				- **Components:** knowledge sources, blackboard, control component
+				- **Connectors:** data access protocols, event/notification mechanisms
 				- **Advantages:** efficiency, fault tolerance, scalability, flexibility, extensibility, performance
 				- **Disadvantages:** invisible data flow, bottleneck, single point of failure
 		- **Event-Based**
 			- **Pub/Sub**
 				- Components publish and subscribe to events with a message broker/dispatcher that is responsible to notify subscribers
+				- **Components:** publishers, subscribers, broker/dispatcher
+				- **Connectors:** event bus, subscription mechanisms, message queues
 				- **Advantages:** evolution and reuse
 				- **Disadvantages:** implicit execution control, hard to ensure correctness, order of message delivery, latency
 		- **Call-Return**
 			- **Client-Server**
 				- Clients invoke services from servers and wait for the responses of those requests
+				- **Components:** clients and servers
+				- **Connectors:** request-response protocols (HTTP, RPC, etc.)
 				- **Advantages:** modifiability, reusability and scalability
 				- **Disadvantages:** bottleneck and single point of failure
 			- **Peer-to-peer**
 				- Distributed computing strategy where cooperating peers that request services of one another
+				- **Components:** peers and services
+				- **Connectors:** network and discovery protocols
 				- **Advantages:** availability, scalability, highly distributed
 				- **Disadvantages:** security, decentralization
 			- **Broker**
 				- Remote service invocation is done transparently via a broker responsible for coordinating the interaction
+				- **Components:** clients, servers, broker
+				- **Connectors:** remote procedure calls, message passing protocols
 				- **Advantages:** location transparency, changeability, portability
 				- **Disadvantages:** performance, bottleneck, single point of failure, security attacks, testability
 			- **SOA**
 				- Independent number of consumers and providers of distributed services with a service bus that redirects and transforms between consumers and providers
+				- **Components:** service providers and consumers, service registry and bus
+				- **Connectors:** service interfaces, message protocols, service contracts
 				- **Advantages:** interoperability
 				- **Disadvantages:** complexity, evolution, performance
 			- **Microservices**
@@ -110,5 +133,7 @@
 				- Can be developed using different technologies and managed by different teams
 				- Opposite of a monolith
 				- Closely related to the deployment allocation view
+				- **Components:** microservices, configuration server, load balancers
+				- **Connectors:** REST APIs, message queues, network protocols
 				- **Advantages:** scalability, modifiability, availability, reliability
-				- **Disadvantages:** reliability, deployability, performance
+				- **Disadvantages:** performance, deployability
