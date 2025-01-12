@@ -1,0 +1,111 @@
+# Buffer Overflows
+- A **buffer overflow** occurs when a program writes (or reads) outside the allocated space for the buffer, normally after the end (but can also occur before the beginning of the buffer).
+- Causes:
+	- Languages like C/C++ do not verify if data overflows the limit of a buffer
+	- Programmers make wrong assumptions about user input
+	- Large number of unsafe string operations:
+		- `gets`, `strcpy`, `strcat`, `sprintf`, `scanf`, ...
+- Consequences:
+	- Program becomes unstable
+	- Program crashes
+	- Program proceeds apparently normal
+- Side effects depend on:
+	- How much data is written after the end of the buffer
+	- What data (if any) is overwritten
+	- Whether the program tries to read overwritten data
+	- What data ends up replacing the memory that gets overwritten
+- Why is this a security problem?
+	- In the worst case, can be exploited to execute arbitrary code 
+	- In other cases, it can:
+		- Modify code
+		- Modify data
+		- Read data (information leak)
+- Types of buffer overflows:
+	- Heap overflows
+	- Stack overflows
+	- Global/static overflows
+- BO can occur not only the user code, but also on the buffers of any module linked to the program, such as a library function.
+
+### Main Solutions for Protection
+- **ASLR (Address Space Layout Randomization)**
+	- The starting address of the address space segments changes in each execution, preventing the pre-computation of
+		- specific addresses to be overwritten (e.g., a function pointer)
+		- location of a specific code
+- **DEP (Data Execution Prevention)**
+	- Also called W Ꚛ X, where W = write and X = execute
+	- The stack pages cannot be executed, but **only written/read**
+	- The code segment can be executed, but **not written**
+- **Stack Canaries**
+	- Put non-deterministic values before or after the places we want to protect in memory
+	- It then checks if canaries were not modified (not overwritten by a BO), before accessing the protected memory
+	- More specifically, a canary (random value) is placed right before the stored RBP and RIP, to detect buffer overflows on the stack attempting to corrupt the RIP to change the execution flow
+- **Control Flow Integrity**
+	- Restricts the control-flow of an application to valid execution traces
+	- Enforces this by monitoring the program at runtime and comparing its state to a set of precomputed valid states
+	- If invalid state is detected, an alert is raised and application terminates
+	- Used to prevent against **control-flow hijack attacks**
+
+### Advanced Overflows
+- **Challenges**
+	- **Shell code includes zeros:**
+		- Functions like `strcpy` stop processing when the first zero is reached
+		- So we substitute zeros with equivalent code: `xorl %eax, %eax`
+	- **Lack of space:**
+		- Reduce code or provide at an earlier time the code so that it is available when needed or look for the code in the program/libraries
+	- **Discover address where code is injected:**
+		- First use an information leak vulnerability to allow the calculation of this address
+	- **Escape several forms of protection** (NX stack, canaries, ASLR, ...):
+		- **Arc injection or return-to-libc:**
+			- Insert new **arc** in the program control-flow graph
+				- Overrun the return address to point to code already in the program - often to the `system` function of the libc
+		- **Return-oriented programming:**
+			- Select and reorganize pieces of already existent code in the program in order to get a relevant program we want to execute
+		- **Heap spray:**
+			- We do not have the precise location to jump
+			- So we spray large regions of the heap with a single byte that translates to a valid instruction such as NOP - creating a **NOP sled** - followed by the actual shell code to execute, with great odds of it being eventually executed
+		- **Modify a pointer:**
+			- The stack is protected with a canary
+			- We modify a pointer (e.g., function pointers, data pointers, exception handlers, or virtual function tables) to **redirect execution or manipulate memory**
+			- Techniques include function-pointer clobbering, data-pointer modification, exception-handler hijacking, virtual pointer table overflow and leveraging malloc-specific behaviors for exploitation
+			- **Impact of modifying an 8-byte pointer:**
+				- Modify security-wise relevant data values in memory (e.g., flag indicating the user is authenticated)
+				- Create an information leak (e.g., by changing a string pointer that is about to be printed)
+				- Cause a jump to an arbitrary address in memory, by overwriting addresses
+
+#### Use-After-Free
+- Occurs when a program continues to use a pointer after it has been freed, with causes problems related to:
+	- error conditions and other exceptional circumstances
+	- confusion over which part of the program is responsible for freeing the memory
+- Impact
+	- **Integrity:** use of previously freed memory may corrupt valid data, if the memory area was allocated and used properly elsewhere
+	- **Availability:** if (malloc) chunk consolidation occurs after the use of previously freed data, the process may crash when invalid data is used as chunk information - DoS
+	- **Arbitrary execution:** if malicious data is entered before chunk consolidation can take place, it may be possible to take advantage of the malloc write-what-where primitive to execute arbitrary code
+
+#### Downcasting Overflows (C++)
+- A **Type Cast** operator is a unary operator that forces one data type to be converted into another data type:
+	- **Upcasting:** from a derived class to its parent class
+	- **Downcasting:** from a parent class to one of its derived classes
+- Upcasting is always safe, but downcasting is not
+- Downcasting assumes the memory layout of the derived class, which can be corrupted, leading to invalid access, crashes or exploitation through manipulated `vtables` or pointers.
+
+#### Integer Overflows
+- Caused by incorrect integer calculations and values exceeding the maximum or minimum limits of the data type, resulting in wrap-around behavior.
+- Types:
+	- **Overflow:**
+		- Occurs when an arithmetic operation results in a value that exceeds the maximum value representable by the integer data type (e.g., adding two large integers). The value wraps around to the minimum representable value.
+	    - **Example**: For a 32-bit unsigned integer, `UINT_MAX + 1` becomes `0`.
+	- **Underflow**:
+		- Occurs when an arithmetic operation results in a value smaller than the minimum value representable by the integer data type (e.g., subtracting a large value from a small one). The value wraps around to the maximum representable value.
+	    - **Example**: For a 32-bit unsigned integer, `0 - 1` becomes `UINT_MAX`.
+	- **Signedness Issues**:
+		- Occurs when an integer's sign bit is misinterpreted (e.g., treating a signed integer as unsigned or vice versa). This can lead to incorrect comparisons or calculations.
+	    - **Example**: A signed 8-bit integer with a value of `-1` (binary `11111111`) interpreted as unsigned becomes `255`.
+	- **Truncation**:
+		- Occurs when an integer is cast to a smaller data type, resulting in the loss of higher-order bits. This can cause the truncated value to be vastly different from the original value.
+	    - **Example**: Casting a 32-bit integer `300` to an 8-bit integer results in `300 % 256 = 44`.
+- Examples of exploits:
+	- Insufficient memory allocation → BO  → arbitrary code execution
+	- Excessive memory allocation/infinite loop → denial of service
+	- Attack against array byte index → overwrite arbitrary byte in memory
+	- Attack to bypass sanitization → BO → …
+	- Logic errors (e.g., modify variable to modify program behavior)
