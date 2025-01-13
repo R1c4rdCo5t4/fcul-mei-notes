@@ -9,3 +9,4 @@
 6. [Web Attacks](./6-web-attacks.md)
 7. [SQL Injections](./7-sql-injections.md)
 8. [Static Code Analysis](./8-static-code-analysis.md)
+9. [Fuzzers](./9-fuzzers.md)
