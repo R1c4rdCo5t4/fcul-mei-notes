@@ -7,3 +7,4 @@
 4. [Buffer Overflows](./4-buffer-overflows.md)
 5. [Format Strings](./5-format-strings.md)
 6. [Web Attacks](./6-web-attacks.md)
+7. [SQL Injections](./7-sql-injections.md)
