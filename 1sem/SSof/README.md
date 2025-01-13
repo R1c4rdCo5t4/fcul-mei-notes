@@ -11,3 +11,4 @@
 8. [Static Code Analysis](./8-static-code-analysis.md)
 9. [Fuzzers](./9-fuzzers.md)
 10. [Race Conditions](./10-race-conditions.md)
+11. [Software Testing and Auditing](./11-software-testing-and-auditing.md)
