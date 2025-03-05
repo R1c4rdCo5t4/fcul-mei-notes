@@ -2,3 +2,4 @@
 
 ## Syllabus
 1. [Introduction](./1-introduction.md)
+2. [Input Space Partitioning](./4-input-space-partitioning.md)
