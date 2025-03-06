@@ -12,7 +12,7 @@ Notes from my [MSc in Computer Science and Engineering](https://fenix.ciencias.u
 
 ### 2nd Semester
 - [**VVS - Verificação e Validação de Software** (Software Verification and Validation)](./2sem/VVS/)
-- [**AW - Aplicações Web** (Web Applications)](./2sem/AW/)
-- [**CN - Computação na Nuvem** (Cloud Computing)](./2sem/CN/)
 - [**TC - Técnicas de Compilação** (Compilation Techniques)](./2sem/TC/)
+- [**CN - Computação na Nuvem** (Cloud Computing)](./2sem/CN/)
+- [**AW - Aplicações na Web** (Web Applications)](./2sem/AW/)
 - [**GOE - Gestão e Organização Empresarial** (Business Management and Organization)](./2sem/GOE/)
