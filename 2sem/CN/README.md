@@ -2,3 +2,4 @@
 
 ## Syllabus
 1. [Introduction](./1-introduction.md)
+2. [Microservices](./2-microservices.md)
