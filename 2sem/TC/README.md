@@ -3,4 +3,5 @@
 ## Syllabus
 1. [Introduction](./1-introduction.md)
 2. [Lexical Analysis](./2-lexical-analysis.md)
-3. [Parsing 1](./3-parsing-1.md)
+3. [Top-down Parsing](3-top-down-parsing.md)
+4. [Bottom-up Parsing](4-bottom-up-parsing.md)

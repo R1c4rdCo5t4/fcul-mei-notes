@@ -3,6 +3,8 @@
 - It bridges lexical analysis (token generation) and semantic analysis (meaning extraction) by **ensuring the program's syntax is valid**
 - While regular expressions are enough for lexical analysis (e.g., defining tokens like `digis = [0-9]+`), parsing requires more expressive power to handle nested structures (e.g., balanced parentheses), which finite automata cannot recognize
 
+![](resources/parser-classification.png)
+
 ## Parser
 - Performs context-free syntax analysis
 - Guides context-sensitive analysis
@@ -102,11 +104,12 @@ void E_prime() {
 
 - **FIRST and FOLLOW sets:**
 	- **FIRST(γ)**: 
-		- Set of terminals that can begin strings derived from γ
+		- Set of terminals that can begin strings derived from a nonterminal γ
 		- Help the parser predict which production to apply - when a nonterminal has multiple productions, the parser uses the lookahead token to check which production's FIRST set contains it (if the sets overlap the parser can't decide - ambiguous grammar)
 		- **Example:** for `T → T * F`, `FIRST(T * F) = {id, num, (}`
 	- **FOLLOW(X):**
-		- Set of terminals that can follow X in some derivation, often including the end-of-file marker $
+		- Set of terminals that can follow a nonterminal X in some derivation
+		- Often includes the end-of-file marker $
 		- Important when a production can generate the empty string ε, as they guide the parser in deciding whether to apply the nullable production or move forward with other rules
 	- **Nullable(X):** true if X can derive the empty string ε
 - **Computation:** iterative algorithm
@@ -139,7 +142,6 @@ Repeat until no change:
 
 #### Eliminating Left Recursion
 - **Problem:** left recursion occurs when a nonterminal directly or indirectly derives itself as the first symbol, which causes infinite recursion in a predictive parser
-
 ```
 E → E + T
   → E + T + T
@@ -148,7 +150,6 @@ E → E + T
 ```
 
 - **Solution:** transform the grammar to remove left recursion, introducing a nonterminal `E'`
-
 ```
 E → T E'
 E' → + T E'
@@ -159,14 +160,12 @@ E' →
 
 #### Left Factoring
 - **Problem:** when productions for a nonterminal share a common prefix, the parser can't decide which to apply based on the lookahead token
-
 ```
 S → if E then S else S
 S → if E then S
 ```
 
 - **Solution:** factor out the common prefix
-
 ```
 S → if E then S X
 X →
