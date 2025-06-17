@@ -9,3 +9,4 @@
 6. [Semantic Analysis](./6-semantic-analysis.md)
 7. [Activation Records](./7-activation-records.md)
 8. [Intermediate Code Generation](./8-intermediate-code-generation.md)
+9. [Optimization & Dataflow Analysis](./9-optimization-and-dataflow-analysis.md)
