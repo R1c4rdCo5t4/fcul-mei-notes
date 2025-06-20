@@ -23,3 +23,34 @@
 	- Used to identify opportunities for common subexpression elimination
 - **Constant Propagation Analysis:** tracks the values of constants and determines the points in the program where a particular constant value is used
 	- Used to identify opportunities for constant folding
+
+![](resources/control-flow-graph.png)
+
+- These optimizations can be calculated through dataflow equations
+
+#### Reaching Definitions
+- We say that *d* reaches a statement *u* in the program if there is some path of control-flow edges from *d* to *u* that does not contain any unambiguous definition of t
+##### Equations
+![](resources/reaching-definitions-equations.png)
+
+##### Example
+![](resources/reaching-definitions-example.png)
+- Here, for example, we can do **constant propagation**: only one definition of *a* reaches statement 3, so we can replace the test *c > a* with *c > 5*
+
+#### Available Expressions
+- An expression *x ⊕ y* is *available* at a node *n* in the flow graph if, on every path from the entry node of the graph to node *n*, *x ⊕ y* is computed at least once and there are no definitions of *x* or *y* since the most recent occurrence of *x ⊕ y* on that path
+
+##### Equations
+![](resources/available-expressions-equations.png)
+
+#### Reaching Expressions
+- An expression *t ← x ⊕ y* (in node *s* of the flow graph) reaches node *n* if there is a path from *s* to *n* that does not go through any assignment to *x* or *y* or through any computation of *x ⊕ y*
+#### Liveness Analysis
+- Liveness of variables “flows” around the edges of the control-flow graph
+- A variable is *live* on an edge if there is a directed path from that edge to a *use* of the variable that does not go through any *def*
+
+![](resources/liveness-analysis.png)
+
+##### Equations
+![](resources/liveness-equations.png)
+![](resources/liveness-equations-gen-kill.png)

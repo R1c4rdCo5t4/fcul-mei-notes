@@ -26,7 +26,7 @@
         - **Accept**: stop successfully when the end-of-file marker ($) is shifted
         - **Error**: stop and report failure
 
-### Example
+#### Example
 - For input the `a := 7` with grammar `S' → S $, S → id := E, E → num`:
 	1. Shift `a`, stack: `a`
 	2. Shift `:=`, stack: `a :=`
@@ -35,6 +35,9 @@
 	5. Reduce `S → id := E`, stack: `S`
 	6. Shift `$`, stack: `S $`
 	7. Accept
+
+#### Another Example
+![](resources/lr-parsing-example.png)
 
 ### Variants
 - **LR(0)**: no lookahead; uses only the stack - simple but weak

@@ -125,6 +125,9 @@ Repeat until no change:
         For each i,j, if Yi+1...Yj-1 nullable, FOLLOW[Yi] ∪= FIRST[Yj].
 ```
 
+#### Example
+![](resources/first-and-follow-sets-example.png)
+
 #### Predictive Parsing Table
 - Two dimensional table with **rows as non terminals** and **columns as terminals**
 - **How to build it:**
