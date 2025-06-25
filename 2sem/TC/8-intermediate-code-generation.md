@@ -1,4 +1,4 @@
-# Intermediate Code Generation (LLVM)
+# Intermediate Code Generation
 - Stage in the process of compiling a program where the compiler translates the AST generated from the source code into an intermediate representation
 - This representation is not machine code but is simpler than the original high-level code
 	- **Translation:** the compiler takes the AST and converts it to an intermediate representation, like LLVM or JVM
@@ -13,10 +13,10 @@
 ### LLVM IR
 - Low-level programming language used as the core representation in the LLVM compiler framework
 - It is typed, in SSA form, and is either written in textual form (`.ll`) or binary form (`.bc`)
-- **Static Single Assignment (SSA):** assigned only once
+- **Static Single Assignment (SSA):** registers can be assigned only once, but can be used as many times as needed
 #### Syntax
 - **Labels:** define *basic blocks*, which are units of code with one entry and one exit point, used as jump targets in branches
-- **Globals:** declared at the module scope, are prefixed by "@"
+- **Globals:** declared at the module scope prefixed by "@"
 - **Locals**: SSA registers prefixed by "%"
 - **Instructions:** 
 	- `alloca` - store memory
@@ -24,7 +24,7 @@
 	- `call` - call a function
 	- `br` - conditional/unconditional branch
 	- `ret` - return
-	- `add`, `mul`, ... - arithmetic operations
+	- `add`, `sub`, `mul`, ... - arithmetic operations
 	- ...
 
 ##### Example:

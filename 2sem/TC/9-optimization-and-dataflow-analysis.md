@@ -17,7 +17,7 @@
 ### Types of Dataflow Analysis
 - **Reaching Definition Analysis:** tracks the definition of a variable and determines the points in the program where the definition "reaches" a particular use of the variable
 	- Used to identify variables that can be safely removed or optimized
-- **Liveness Analysis:** determines the points in the program where a variable is "live", meaning that its value is still needed for some future computation
+- **Liveness Analysis:** determines the points in the program where a variable is "live", meaning that its value is still needed for some future computation (it's considered dead otherwise)
 	- Used to identify variables that can be safely removed or optimized
 - **Available Expressions Analysis:** determines the points in the program where a particular expression is "available", meaning that its value has already been computed and can be reused
 	- Used to identify opportunities for common subexpression elimination
@@ -53,4 +53,3 @@
 
 ##### Equations
 ![](resources/liveness-equations.png)
-![](resources/liveness-equations-gen-kill.png)
